@@ -866,7 +866,9 @@ function loadSheet(){
  if(!SHEET_ID){setup.style.display="block";statusEl.textContent="尚未設定";return;}
  setup.style.display="none";
  statusEl.textContent="讀取中...";
- Papa.parse(csvUrl(),{download:true,header:true,skipEmptyLines:true,complete:onParsed,
+ // 注意：PapaParse 的 complete 第二參數是 file 物件（truthy），不可直接當 append 用
+ Papa.parse(csvUrl(),{download:true,header:true,skipEmptyLines:true,
+  complete:res=>onParsed(res, document.getElementById("mergeChk").checked),
   error:()=>{
    statusEl.textContent="讀取失敗";
    tbody.innerHTML=`<tr><td colspan="${columns.length||1}">讀不到資料：請確認 SHEET_ID 正確、且試算表已設「知道連結的任何人／檢視者」。</td></tr>`;
