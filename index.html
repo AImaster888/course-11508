@@ -268,7 +268,7 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <button onclick="useCustom()">載入我的試算表</button>
 <label class="up">📂 匯入 CSV<input type="file" id="inFile" accept=".csv" onchange="useFile(this.files[0]);this.value='';"></label>
 <label class="merge"><input type="checkbox" id="mergeChk"> 合併到現有資料</label>
-<button class="demo-btn" onclick="useDemo()">回到 Demo</button>
+<button class="demo-btn" onclick="clearData()">🗑 清除資料</button>
 </div>
 <div class="parsed" id="parsed"></div>
 <div class="privacy">🔒 「匯入 CSV」的檔案只在你的瀏覽器裡解析，<b>不會上傳到任何地方</b>；支援 UTF-8 與 Big5（舊 Excel）編碼，會自動偵測。試算表模式則需該表設為「知道連結的任何人可檢視」。</div>
@@ -671,10 +671,15 @@ function useCustom(){
  mode="sheet";srcTag.textContent="我的試算表";
  loadSheet();
 }
-function useDemo(){
- SHEET_ID=cfg.SHEET_ID||"";GID=cfg.GID||"0";
- mode="sheet";srcTag.textContent="Demo 資料";
- loadSheet();
+/* 清空已載入的資料，回到未載入狀態（合併勾選也一併取消，避免下次又疊上去） */
+function clearData(){
+ allRows=[];columns=[];currentRows=[];srcCount=0;
+ document.getElementById("mergeChk").checked=false;
+ thead.innerHTML="";tbody.innerHTML="";count.textContent="";
+ setupSmartFilters();
+ setup.style.display="block";
+ srcTag.textContent="尚未載入";
+ statusEl.textContent="已清除，可重新載入";
 }
 function useFile(f){
  if(!f) return;
