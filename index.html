@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<!--
+============================================================
+ 課程入口網站 ─ 機關研習教材（三籤單頁版）
+ 版次：v1.1（2026-07-19）｜v1.1 去識別化（移除單位名）
+ 版次：v2.1（2026-07-18）
+ 版本歷程：
+   v1.0 2026-07-13 資料查詢閱讀器 Demo（單頁工具）
+   v2.0 2026-07-18 合併為三籤課程入口：
+        籤一 課程總覽（結論先行）／籤二 Demo 工具／籤三 GitHub 教學八章
+   v2.1 2026-07-18 依 Claude×Codex 審查修正：GID self-XSS、status 變數
+        名衝突、hash 解碼防呆、Big5 嚴格偵測、CSV 錯誤警示、gh 可見度
+        旗標、私有Fork/刪除還原/免費說法文案、rel=noopener、列印省墨
+ 備份：index.html.bak-20260718（v1.0）、github-tutorial.html.bak-20260718
+============================================================
+ 籤切換：網址 hash 路由（#tab-map / #tab-demo / #tab-how），
+ 章節錨點（#how-reg 等）會自動切到所屬籤再捲動。
+ 列印時只印籤三（教學講義）。
+============================================================
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 應用與 GitHub 實作 ─ 課程入口</title>
+<script src="papaparse.min.js"></script>
+<script src="config.js"></script>
+<style>
+:root{--ink:#22271f;--paper:#f5f7f3;--line:#e4e4db;--accent:#2f5233;--soft:#e7efe7;
+--ok-bg:#dff4df;--ok-tx:#186a2e;--warn-bg:#fdeaea;--warn-tx:#9c2b2b;--late-bg:#faeeda;--late-tx:#854f0b;
+--ai:#4a6b8a;--ai-soft:#eef4f9;--ai-line:#c9d8e6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);font-family:"Microsoft JhengHei","Noto Sans TC",sans-serif;padding:24px;color:var(--ink);line-height:1.8}
+.wrap{max-width:1150px;margin:auto}
+header.top{border-bottom:2px solid var(--accent);padding-bottom:0;margin-bottom:18px}
+header.top h1{margin:0;font-size:24px}
+header.top .sub{color:#6c716a;font-size:14px;margin:4px 0 12px}
+nav.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:-2px}
+nav.tabs a{padding:9px 18px;border:2px solid var(--line);border-bottom:none;border-radius:10px 10px 0 0;background:#fff;
+color:var(--ink);text-decoration:none;font-size:15px;font-weight:700}
+nav.tabs a.on{border-color:var(--accent);background:var(--accent);color:#fff}
+nav.tabs a.about-link{margin-left:auto;align-self:center;border:1px solid var(--ai-line);border-radius:20px;
+background:var(--ai-soft);color:var(--ai);font-weight:400;font-size:14px;padding:7px 16px}
+nav.tabs a.about-link:hover{background:var(--ai);color:#fff}
+section.tab{display:none}
+#tab-map{display:block} /* 無 JS 時保底顯示籤一；JS 路由會以 inline style 覆蓋 */
+h2{color:var(--accent);border-left:5px solid var(--accent);padding-left:10px;margin:40px 0 14px;font-size:20px}
+h3{margin:18px 0 8px;font-size:16.5px}
+p{margin:8px 0}
+code{background:#eef1ec;padding:2px 7px;border-radius:4px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px}
+pre{background:#22271f;color:#e8f0e8;padding:12px 16px;border-radius:8px;overflow-x:auto;font-size:13.5px;line-height:1.7}
+pre code{background:none;color:inherit;padding:0}
+a.plain{color:var(--accent)}
+
+/* ── 通用卡片／提示 ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin:14px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px}
+.card b.title{color:var(--accent);font-size:16px}
+.card .plain{background:var(--soft);border-radius:6px;padding:6px 10px;margin:8px 0;font-size:14px}
+.card ul{margin:6px 0;padding-left:20px;font-size:14.5px}
+.note{background:#fff8e1;border:1px solid #f0d98c;border-radius:8px;padding:11px 16px;margin:12px 0;font-size:14.5px}
+.danger{background:var(--warn-bg);border:1px solid #e5b8b8;border-radius:8px;padding:11px 16px;margin:12px 0;font-size:14.5px}
+.danger b{color:var(--warn-tx)}
+.gold{background:var(--soft);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:11px 16px;margin:14px 0;font-size:15px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+@media(max-width:760px){.duo{grid-template-columns:1fr}}
+.how{background:#fff;border-radius:10px;padding:14px 18px;border:1px solid var(--line)}
+.how.manual{border-top:4px solid var(--accent)}
+.how.aiway{border-top:4px solid var(--ai)}
+.how .tag{display:inline-block;padding:2px 12px;border-radius:14px;font-size:13px;font-weight:700;margin-bottom:8px}
+.how.manual .tag{background:var(--soft);color:var(--accent)}
+.how.aiway .tag{background:var(--ai-soft);color:var(--ai)}
+.how ol{margin:6px 0;padding-left:22px;font-size:14.5px}
+.how ol li{margin:5px 0}
+.say{background:var(--ai-soft);border:1px solid var(--ai-line);border-radius:8px;padding:9px 13px;margin:8px 0;font-size:14.5px}
+.say::before{content:"🗣 你對 AI 說：";font-weight:700;color:var(--ai);display:block;font-size:13px;margin-bottom:3px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0;font-size:14.5px}
+.flow .step{background:var(--soft);border-radius:8px;padding:8px 14px;text-align:center}
+.flow .step.bad{background:var(--warn-bg);color:var(--warn-tx)}
+.flow .step.save{background:var(--ok-bg);color:var(--ok-tx)}
+.flow .arr{color:#6c716a}
+.cta{display:inline-block;padding:11px 22px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none;font-size:15.5px;font-weight:700;margin:6px 8px 6px 0}
+.cta.alt{background:var(--ai)}
+.mapnum{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:var(--accent);color:#fff;font-size:14px;margin-right:6px}
+
+/* ── 表格（教學與 Demo 共用） ── */
+.tblbox{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:8px;margin:12px 0}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:14px;min-width:560px}
+th,td{padding:9px 10px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}
+th{background:var(--soft);white-space:nowrap;position:sticky;top:0}
+tbody tr:hover{background:#f4f6f2}
+.badge{padding:3px 10px;border-radius:20px;white-space:nowrap;font-size:13px}
+.b-ok{background:var(--ok-bg);color:var(--ok-tx)}
+.b-rej,.b-warn{background:var(--warn-bg);color:var(--warn-tx)}
+.b-late{background:var(--late-bg);color:var(--late-tx)}
+.b-none{background:#ececec;color:#666}
+
+/* ── Demo 工具區（原 v1.0 樣式） ── */
+.source{background:#fff;border:1px dashed var(--accent);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+.source b{color:var(--accent)}
+.source .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.source input[type=text]{padding:9px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px;font-family:ui-monospace,monospace}
+.source input.sid{flex:2;min-width:220px}
+.source input.gid{width:110px}
+.source button,.source label.up{padding:9px 16px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;display:inline-block}
+.source .demo-btn{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.source label.up{background:#4a6b8a}
+.source input[type=file]{display:none}
+.source label.merge{font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:5px;cursor:pointer;padding:6px 4px}
+.source label.merge input{accent-color:var(--accent)}
+.src-tag{display:inline-block;margin-left:8px;padding:2px 10px;border-radius:14px;font-size:12.5px;background:var(--soft);color:var(--accent)}
+.parsed{font-size:13px;margin-top:8px;word-break:break-all}
+.parsed code{background:#eef1ec;padding:2px 6px;border-radius:4px;font-size:12px}
+.parsed .p-ok{color:var(--ok-tx);font-weight:700}
+.parsed .p-bad{color:var(--warn-tx)}
+.privacy{font-size:12.5px;color:#6c716a;margin-top:6px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.controls input,.controls select,.controls button{padding:10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
+.controls input{flex:1;min-width:200px}
+.controls button{background:var(--accent);color:#fff;border:none;cursor:pointer}
+#count{font-size:14px;color:#6c716a;margin-bottom:8px}
+#status{font-size:14px;color:#6c716a}
+dialog{border:none;border-radius:10px;padding:20px;max-width:460px;box-shadow:0 10px 40px rgba(0,0,0,.18)}
+dialog b{color:var(--accent)}
+dialog button{margin-top:10px;padding:8px 16px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer}
+.setup{background:#fff8e1;border:1px solid #f0d98c;border-radius:8px;padding:14px 18px;margin-bottom:14px;line-height:1.7;display:none}
+.ai{background:#fff;border:1px solid #c9d8e6;border-left:4px solid #4a6b8a;border-radius:10px;padding:12px 16px;margin:0 0 14px}
+.ai b{color:#2c4a66}
+.ai .ai-sub{font-size:12.5px;color:#6c716a}
+.ai .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ai select,.ai input{padding:9px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
+.ai input#aiKey{flex:1;min-width:220px;font-family:ui-monospace,monospace}
+.ai input#aiQ{flex:1;min-width:220px}
+.ai button{padding:9px 16px;border:none;border-radius:6px;background:#4a6b8a;color:#fff;cursor:pointer;font-size:14px}
+.ai button:disabled{opacity:.55;cursor:wait}
+.ai-warn{font-size:12.5px;color:#854f0b;background:var(--late-bg);border-radius:6px;padding:8px 12px;margin-top:8px;line-height:1.7}
+.ai .chips{gap:6px}
+.ai .chip{background:#fff;color:#2c4a66;border:1px solid #c9d8e6;border-radius:18px;padding:6px 13px;font-size:13px}
+.ai .chip:hover{background:#eef4f9}
+.ai-out{background:#f7f9fb;border:1px solid #dde6ee;border-radius:6px;padding:12px 14px;margin-top:10px;white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:14px;line-height:1.8;max-height:420px;overflow-y:auto}
+
+footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-size:12.5px;color:#6c716a}
+
+/* 列印：只印籤三講義 */
+@media print{
+ body{background:#fff;padding:0}
+ nav.tabs,#tab-map,#tab-demo{display:none!important}
+ #tab-how{display:block!important}
+ h2{page-break-after:avoid}
+ .duo,.card,.tblbox{page-break-inside:avoid}
+ pre{background:#fff!important;color:#000!important;border:1px solid #ccc} /* 深底程式框改白底省墨 */
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+<h1>AI 應用與 GitHub 實作</h1>
+<div class="sub">課程入口（一個網址，全部資料都在這）</div>
+<nav class="tabs">
+<a href="#tab-map" data-tab="tab-map">🎯 這堂課帶走什麼</a>
+<a href="#tab-demo" data-tab="tab-demo">🔧 成品直接玩</a>
+<a href="#tab-how" data-tab="tab-how">📖 怎麼做到</a>
+<a class="about-link" href="about.html">👤 關於我</a>
+</nav>
+</header>
+
+<!-- ════════════════════════ 籤一：課程總覽 ════════════════════════ -->
+<section class="tab" id="tab-map">
+
+<div class="gold" style="font-size:16.5px">
+<b>一句話結論：</b>不寫程式、不架伺服器、不花一毛錢——把手上的 Excel 月報，
+變成同仁<b>掃 QR Code 就能查詢</b>、還有 <b>AI 幫忙摘要</b>的網頁工具。今天就帶著自己的成品回家。
+</div>
+
+<h2>你會帶走三樣東西</h2>
+<div class="cards">
+<div class="card"><b class="title">🔧 一個現成工具</b>
+<p style="font-size:14.5px">「工作月報查詢」網頁。課堂上 Fork 一份到你帳號，換上你的資料，它就是你的。</p></div>
+<div class="card"><b class="title">🧭 一套方法</b>
+<p style="font-size:14.5px">指揮 AI 做事＋GitHub 上線的完整流程。回辦公室換個資料源，就是另一個新工具。</p></div>
+<div class="card"><b class="title">💊 一顆後悔藥</b>
+<p style="font-size:14.5px">版本控制的觀念：讓 AI 幫你改東西、改壞了也回得去。這是 AI 時代最重要的保命符。</p></div>
+</div>
+
+<h2>課程地圖（五個部分）</h2>
+<div class="cards">
+<div class="card"><b class="title"><span class="mapnum">一</span>AI 導入心得分享</b>
+<p style="font-size:14.5px">工程管理、會議紀錄、資料整理、日常行政導入 AI 的實務經驗。
+佐證都在 <a class="plain" href="https://aimaster888.github.io/toolbox/" target="_blank" rel="noopener">工務智庫 Toolbox</a>：28 個自製工具，全是下班後用 AI 做出來的。
+講者是誰？→ <a class="plain" href="about.html">講師介紹</a>（這頁本身就是第三部分教的「數位履歷」範例）</p></div>
+<div class="card"><b class="title"><span class="mapnum">二</span>政府 AI 與數位轉型政策</b>
+<p style="font-size:14.5px">配合行政院智慧政府與 AI 應用政策方向簡介。
+簡報下載 → <a class="plain" href="政策簡報.pdf" target="_blank" rel="noopener">政策簡報（PDF）</a></p></div>
+<div class="card"><b class="title"><span class="mapnum">三</span>GitHub 個人網頁與知識管理</b>
+<p style="font-size:14.5px">用 GitHub Pages 建個人網頁：數位履歷、成果展示、知識管理平台。
+完整教學在 <a class="plain" href="#how-why">📖 怎麼做到</a>。</p></div>
+<div class="card"><b class="title"><span class="mapnum">四</span>AI 數位能力認證</b>
+<p style="font-size:14.5px">適合非資訊背景同仁的 AI 入門證照：<b>先花 2 小時免費拿一張</b>，再看要不要往上爬。
+推薦清單 → <a class="plain" href="#cert-plan">本頁下方</a></p></div>
+<div class="card"><b class="title"><span class="mapnum">五</span>AI 實務應用案例</b>
+<p style="font-size:14.5px">會議紀錄整理、公文潤稿、工程查核紀錄、簡報製作、法規查詢、資料彙整。
+案例集中在 <a class="plain" href="https://aimaster888.github.io/toolbox/" target="_blank" rel="noopener">Toolbox</a>，
+現場帶做的在 <a class="plain" href="#tab-demo">🔧 成品直接玩</a>。</p></div>
+<div class="card" style="border-style:dashed"><b class="title">🤖 再往上長的樣子（展示）</b>
+<p style="font-size:14.5px">同一套思路的進階版：Telegram／LINE 機器人（工程查核拍照丟群組自動整理）、n8n 自動化、雲端部署。今天看得到方向，門檻留給有興趣的人。</p></div>
+</div>
+
+<h2 id="cert-plan">AI 認證怎麼考：先快速拿一張，再看要不要往上爬</h2>
+<div class="tblbox">
+<table>
+<thead><tr><th>路線</th><th>認證</th><th>時間／費用</th><th>適合誰</th></tr></thead>
+<tbody>
+<tr><td><b>🥇 第一張（推薦）</b></td><td><b>Generative AI for Educators</b><br>Google × MIT 合作</td><td>線上約 <b>2 小時</b>、<b>免費</b></td><td>所有人。不用寫程式，看影片＋小測驗，當天拿 Google 掛名證書</td></tr>
+<tr><td>進階：自動化</td><td>n8n Course Level 1</td><td>線上數小時、免費</td><td>想把例行雜事交給機器的人</td></tr>
+<tr><td>進階：AI 開發</td><td>Claude Code in Action<br>Anthropic Education</td><td>線上數小時、免費</td><td>想認真用 AI 寫工具的人（原廠證書，含金量最高）</td></tr>
+<tr><td>官方認證</td><td>iPAS AI 應用規劃師（經濟部）</td><td>需報名筆試、每年固定場次</td><td>想取得國內官方認證者，可自行評估</td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:14px">💬 入門先拿 <b>Google 那張</b>就好——講師自己考過（證書見<a class="plain" href="about.html">講師介紹</a>），免費、線上、不用寫程式。其餘等有需要再說。</p>
+
+<h2>公務員最常見的三個疑慮，先講清楚</h2>
+<div class="note">
+<b>❶ 資料會不會外洩？</b>工具的「匯入 CSV」模式，檔案只在你自己的瀏覽器裡解析，<b>不上傳到任何地方</b>。<br>
+<b>❷ 機密怎麼辦？</b>紅線很簡單：公務機密與個資，不放公開試算表、不輸入外部 AI 服務。課程裡每一步都會標明資料流向。<br>
+<b>❸ 要花錢或裝軟體嗎？</b>課程主線（Fork＋上線）全程免費、只用瀏覽器，不必申請採購、不必麻煩資訊室；進階的 AI 指令路線才需要裝工具，AI 分析用自己的金鑰、可能有少量 API 費用（頁面都有標示）。
+</div>
+
+<p style="margin-top:22px">
+<a class="cta" href="#tab-demo">先看成品 →</a>
+<a class="cta alt" href="#how-why">想學怎麼做 →</a>
+</p>
+</section>
+
+<!-- ════════════════════════ 籤二：Demo 工具 ════════════════════════ -->
+<section class="tab" id="tab-demo">
+
+<div class="note" style="margin-top:6px">
+🔧 這是「<b>工作月報查詢</b>」示範工具：同一支程式，Google 試算表／本機 CSV 都能讀，還能叫 AI 分析。
+想把它變成你自己的 → <a class="plain" href="#how-fork">📖 第 4 章：Fork 老師的成品</a>。
+想看我日常真的在用的 28 個工具 → <a class="plain" href="https://aimaster888.github.io/toolbox/" target="_blank" rel="noopener">工務智庫 Toolbox</a>。
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+<div>
+<h2 style="margin:0;border:none;padding:0">資料查詢閱讀器 <span class="src-tag" id="srcTag">Demo 資料</span></h2>
+<div class="sub" style="color:#6c716a;font-size:14px">Google Sheets／本機 CSV 都能讀 ─ 換個資料源就是你的工具</div>
+</div>
+<div id="status">讀取中...</div>
+</div>
+
+<div id="setup" class="setup">
+<b>👋 還沒設定</b>：把 <code>config.example.js</code> 複製成 <code>config.js</code> 填入 demo 試算表 ID；或貼一個 SHEET_ID；或直接「匯入 CSV」。
+</div>
+
+<!-- 三種資料來源 -->
+<div class="source">
+<b>🔄 資料來源</b>（三選一，隨時可切換）
+<div class="row">
+<input type="text" class="sid" id="inSid" placeholder="貼上整個試算表網址（或直接貼 SHEET_ID）" oninput="previewParse()" autocomplete="off">
+<input type="text" class="gid" id="inGid" placeholder="GID，預設 0" oninput="previewParse()" autocomplete="off">
+<button onclick="useCustom()">載入我的試算表</button>
+<label class="up">📂 匯入 CSV<input type="file" id="inFile" accept=".csv" onchange="useFile(this.files[0]);this.value='';"></label>
+<label class="merge"><input type="checkbox" id="mergeChk"> 合併到現有資料</label>
+<button class="demo-btn" onclick="useDemo()">回到 Demo</button>
+</div>
+<div class="parsed" id="parsed"></div>
+<div class="privacy">🔒 「匯入 CSV」的檔案只在你的瀏覽器裡解析，<b>不會上傳到任何地方</b>；支援 UTF-8 與 Big5（舊 Excel）編碼，會自動偵測。試算表模式則需該表設為「知道連結的任何人可檢視」。</div>
+</div>
+
+<!-- 傳統搜尋 -->
+<div class="controls">
+<input id="keyword" placeholder="關鍵字搜尋（所有欄位）…" autocomplete="off">
+<select id="filterResult" style="display:none"><option value="">全部審查結果</option></select>
+<select id="filterLate" style="display:none">
+<option value="">全部提送狀況</option>
+<option value="LATE">有逾期</option>
+<option value="ONTIME">無逾期</option>
+</select>
+<button onclick="reload()">重新整理</button>
+</div>
+
+<div id="count"></div>
+
+<!-- AI 分析（BYOK：自備金鑰） -->
+<div class="ai">
+<b>🤖 AI 分析</b><span class="ai-sub">（自備金鑰 BYOK ─ 金鑰只在你的瀏覽器記憶體，不儲存、關頁即忘）</span>
+<div class="row">
+<select id="aiProvider">
+<option value="gemini">Google Gemini（gemini-2.5-flash）</option>
+<option value="openai">OpenAI ChatGPT（gpt-5.4-mini）</option>
+</select>
+<input type="password" id="aiKey" placeholder="貼上你的 API Key（不會儲存）" autocomplete="new-password">
+</div>
+<div class="row">
+<input type="text" id="aiQ" placeholder="想問什麼？留空＝總結目前篩選出的資料" autocomplete="off">
+<button onclick="askAI()" id="aiBtn">送出分析</button>
+</div>
+<div class="row chips">
+<button class="chip" onclick="quickAsk('summary')">📋 總結重點</button>
+<button class="chip" onclick="quickAsk('late')">⏰ 逾期分析</button>
+<button class="chip" onclick="quickAsk('reject')">↩️ 審退整理</button>
+<button class="chip" onclick="quickAsk('draft')">✍️ 寫成報告文字</button>
+</div>
+<div class="ai-warn">⚠️ 按下送出後，<b>「目前篩選出的資料」會傳送到所選 AI 官方服務</b>。請先確認資料非機密（公務機密資料不得輸入外部 AI 服務）。建議使用低額度、可隨時撤銷的金鑰；用完可到該服務後台撤銷。可按 F12 → Network 親自確認金鑰只送往官方 API。</div>
+<pre id="aiOut" class="ai-out" style="display:none"></pre>
+</div>
+
+<div class="tblbox">
+<table>
+<thead id="thead"></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ════════════════════════ 籤三：GitHub 教學 ════════════════════════ -->
+<section class="tab" id="tab-how">
+
+<div class="toc" style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 20px;margin:6px 0 0">
+<b style="color:var(--accent)">📑 目錄</b>
+<ol style="margin:6px 0 0;padding-left:22px">
+<li><a class="plain" href="#how-why">為什麼一定要學 GitHub？</a></li>
+<li><a class="plain" href="#how-reg">註冊 GitHub 帳號</a></li>
+<li><a class="plain" href="#how-concepts">五個核心概念</a></li>
+<li><a class="plain" href="#how-fork">Fork 老師的成品（10 分鐘有自己的網頁）</a></li>
+<li><a class="plain" href="#how-data">接上你自己的資料：試算表權限與 ID</a></li>
+<li><a class="plain" href="#how-create">自己從零建 Repo：人工建 vs AI 建</a></li>
+<li><a class="plain" href="#how-manage">管理你的 Repo：公開／私有、更名、刪除</a></li>
+<li><a class="plain" href="#how-vibe">用 Gemini 改自己的網頁＋課堂練習</a></li>
+</ol>
+</div>
+
+<!-- ── 1 ── -->
+<h2 id="how-why">1. 為什麼一定要學 GitHub？</h2>
+<p>先看一個你一定見過的資料夾：</p>
+<pre><code>簽稿_v1.docx
+簽稿_v2_修改.docx
+簽稿_final.docx
+簽稿_final_真的final.docx
+簽稿_final_科長改過.docx</code></pre>
+<p>GitHub 的做法：<b>一份檔案</b>，每次修改自動記錄版本，隨時回到任一版本，雲端備份不怕遺失。</p>
+<p>更重要的是——用 AI（Claude、Cursor…）寫東西時，AI 會一直問你「要不要 <b>commit</b>？要不要開 <b>branch</b>？」
+聽不懂就只能亂答，最後<b>原本能動的東西被 AI 改壞，再也回不去</b>。</p>
+<div class="flow">
+<span class="step save">✅ Commit 存檔<br><small>（程式能動）</small></span>
+<span class="arr">→</span>
+<span class="step">🤖 讓 AI 繼續改</span>
+<span class="arr">→</span>
+<span class="step bad">💥 改壞了！</span>
+<span class="arr">→</span>
+<span class="step save">⏪ 讀檔回存檔點<br><small>（毫髮無傷）</small></span>
+</div>
+<div class="gold">💡 學 GitHub 不是為了背指令，是為了給自己買一顆<b>「後悔藥」</b>。懂得掌控版本的人，才能放心讓 AI 幫你做事。</div>
+
+<!-- ── 2 ── -->
+<h2 id="how-reg">2. 註冊 GitHub 帳號（約 3 分鐘）</h2>
+<ol style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px 14px 40px">
+<li>打開 <code>github.com</code> → 右上角 <b>Sign up</b>。（想更快 → 直接按 <b>Continue with Google</b> 用 Google 帳號登入。）</li>
+<li>輸入 <b>email</b> → 設<b>密碼</b> → 取<b>使用者名稱（username）</b>。</li>
+<li>過一個拼圖驗證 → 回 email 收<b>驗證碼</b>輸入 → 方案選 <b>Free</b>（免費，夠用）。</li>
+<li>中間問程度、用途的問題可直接 <b>Skip</b>。完成！</li>
+</ol>
+<div class="note">📌 <b>username 要慎選</b>：它會出現在你所有網址裡（<code>github.com/名字</code>、<code>名字.github.io</code>），全世界看得到。取個乾淨、日後不尷尬的。<br>
+📌 <b>email 一定要驗證</b>，沒驗證不能建立或 Fork repo。建議之後開兩步驟驗證（2FA）。</div>
+
+<!-- ── 3 ── -->
+<h2 id="how-concepts">3. 五個核心概念</h2>
+<p>不用背指令，但這五個名詞要在腦中有畫面，才能指揮 AI：</p>
+<div class="cards">
+<div class="card">
+<b class="title">① Repository（Repo，倉庫）</b>
+<div class="plain">白話：你的<b>「專案主資料夾」</b>。</div>
+<ul><li>雲端存放一個專案的所有程式、圖片、文件。</li><li>唸「瑞剖」；別寫成 repro，那是另一個字。</li></ul>
+</div>
+<div class="card">
+<b class="title">② Commit（提交，拍照存檔）</b>
+<div class="plain">白話：對專案現況拍一張<b>「時空快照」</b>。</div>
+<ul><li>AI 每完成一個小功能就讓它 Commit 一次。</li><li>之後寫壞了，隨時「讀檔」回來。<b>頻繁存檔是保命符。</b></li></ul>
+</div>
+<div class="card">
+<b class="title">③ Branch（分支，平行宇宙）</b>
+<div class="plain">白話：複製出一個<b>「平行實驗空間」</b>。</div>
+<ul><li>做大改動前先開分支，怎麼改都不影響能動的主程式（<code>main</code>）。</li></ul>
+</div>
+<div class="card">
+<b class="title">④ Merge／Pull Request（合併）</b>
+<div class="plain">白話：把平行宇宙的成果<b>「合併」</b>回現實。</div>
+<ul><li>分支裡測試沒問題，再合併回 main 正式上線。</li><li>PR＝多人協作時的「申請合併審查單」。</li></ul>
+</div>
+<div class="card">
+<b class="title">⑤ Fork（分叉複製）★ 今天的主角</b>
+<div class="plain">白話：把<b>別人的</b>專案原樣複製一份到<b>你的帳號</b>。</div>
+<ul><li>複製後隨你改，完全不影響原作者那份。</li><li>原作者更新，你的那份<b>不會自動跟著變</b>（要自己按 Sync fork）。</li></ul>
+</div>
+</div>
+
+<!-- ── 4 ── -->
+<h2 id="how-fork">4. Fork 老師的成品（10 分鐘，先有自己的網頁）</h2>
+<p>教學 Repo：<a class="plain" href="https://github.com/AImaster888/sheet-query-demo" target="_blank" rel="noopener"><b>github.com/AImaster888/sheet-query-demo</b></a>（就是籤二那個工具的完整原始碼＋教學文件）</p>
+<ol style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px 14px 40px">
+<li>登入 GitHub，打開上面的 Repo 網址。</li>
+<li>按右上角 <b>Fork</b> → <b>Create fork</b>。現在你帳號裡有一份一模一樣的了。</li>
+<li>在<b>你的那份</b> Repo：上方 <b>Settings</b> → 左側 <b>Pages</b> → Source 選 <b>Deploy from a branch</b> → 分支 <code>main</code>、資料夾 <code>/ (root)</code> → <b>Save</b>。</li>
+<li>等 1～2 分鐘，重整頁面 → 出現你的專屬網址：<br><code>https://你的帳號.github.io/sheet-query-demo/</code></li>
+<li>打開網址 → 看到網頁顯示「還沒設定」──<b>正常！這是故意的</b>，下一章就是要教你接上自己的資料。</li>
+</ol>
+<div class="gold">✅ 到這裡你已經完成「Fork 別人的專案 → 發布成自己的網頁」。<b>這一頁網頁掛在你的帳號下，跟老師無關了</b>——你怎麼改都不會影響別人，別人也改不到你的。</div>
+<div class="note">📌 <b>Repo 和 Pages 是兩個東西</b>：Repo（<code>github.com/…</code>）放原始碼；Pages（<code>…github.io/…</code>）是跑起來的網站。Pages 是讀 Repo 的檔案發布出來的成品。</div>
+
+<!-- ── 5 ── -->
+<h2 id="how-data">5. 接上你自己的資料：試算表權限與 ID</h2>
+<p>Fork 很快，<b>90% 的人卡在這一章</b>。先選路，再動手：</p>
+<div class="tblbox">
+<table>
+<thead><tr><th></th><th>路線 A：Google 試算表連線</th><th>路線 B：本機 CSV 匯入</th></tr></thead>
+<tbody>
+<tr><td><b>設定</b></td><td>要開試算表共用權限（下面教）</td><td><span class="badge b-ok">零設定</span>，網頁上點「匯入 CSV」就好</td></tr>
+<tr><td><b>資料去哪</b></td><td>試算表變成「知道連結就能看」＝<b>半公開</b></td><td>檔案只在你瀏覽器裡解析，<b>不上傳</b></td></tr>
+<tr><td><b>適合</b></td><td>非機密、想要「改試算表→網頁自動更新」</td><td><b>公務資料建議走這條</b>，最私密</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>路線 A 之一：開權限（最多人卡關的一步）</h3>
+<ol style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px 14px 40px">
+<li>打開你的 Google 試算表 → 右上角藍色「<b>共用</b>」。</li>
+<li>找<b>中間偏下的「一般存取權」</b>那區。（⚠️ 不是上面填 email 的框！那是「只給特定人」，前端讀不到。）</li>
+<li>預設寫「限制」→ 點它 → 改成「<b>知道連結的任何人</b>」。</li>
+<li>右邊角色確認是「<b>檢視者</b>」（千萬不要給編輯者）→ 按<b>完成</b>。</li>
+<li>✅ 做對的樣子：該區從「🔒 限制」變成「🌐 知道連結的任何人（檢視者）」，看到地球圖示就對了。</li>
+</ol>
+
+<h3>路線 A 之二：找出兩個編號</h3>
+<pre><code>docs.google.com/spreadsheets/d/【SHEET_ID】/edit#gid=【GID】
+                               └── 這一長串 ──┘        └ 這串數字 ┘</code></pre>
+<p>其實<b>不用自己拆</b>：籤二的工具支援「貼整條網址」，會自動認出 SHEET_ID 和 GID。第一個分頁的 GID 通常是 <code>0</code>。</p>
+
+<h3>先自己測一次（分清楚是權限問題還是程式問題）</h3>
+<p>把這條網址換上你的兩個編號，貼到瀏覽器按 Enter：</p>
+<pre><code>https://docs.google.com/spreadsheets/d/你的SHEET_ID/export?format=csv&amp;gid=你的GID</code></pre>
+<p>✅ 下載到 .csv 或看到一堆逗號文字＝通了。❌ 出現「你需要存取權」＝權限沒設對，回上面重設。</p>
+
+<div class="tblbox">
+<table>
+<thead><tr><th>#</th><th>讀不到的症狀</th><th>原因／解法</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>要求登入、完全讀不到</td><td>停在「限制」沒改 ← <b>最常見</b></td></tr>
+<tr><td>2</td><td>只有自己看得到</td><td>只加了某人 email，沒開「任何人」</td></tr>
+<tr><td>3</td><td>下拉根本沒有「任何人」選項</td><td>機關／公司帳號被管理員鎖 → 改用<b>個人 Gmail</b> 的試算表，或走路線 B</td></tr>
+<tr><td>4</td><td>讀到別的分頁或空白</td><td>GID 填錯，確認 <code>#gid=</code> 後面那串</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="danger">⚠️ <b>資安紅線：</b>「知道連結的任何人可檢視」＝實質半公開。<b>個資、公務機密絕對不能放</b>進走路線 A 的試算表。
+另外要知道：純前端網頁「藏不住」資料——瀏覽器讀得到的東西，訪客按 F12 也拿得到。真的要藏資料要走後端（進階，見 Repo 裡的 <code>apps-script-proxy.gs</code>）。</div>
+
+<!-- ── 6 ── -->
+<h2 id="how-create">6. 自己從零建 Repo：人工建 vs AI 建</h2>
+<p>Fork 是複製別人的；自己的東西要上線，就要會<b>建自己的 Repo</b>。兩種都要會：人工建讓你理解每個選項，AI 建是日常姿勢。</p>
+<div class="duo">
+<div class="how manual">
+<span class="tag">👋 人工建（GitHub 網頁）</span>
+<ol>
+<li>右上角「<b>＋</b>」→「<b>New repository</b>」。</li>
+<li><b>Repository name</b>：英文小寫加連字號（例：<code>my-first-repo</code>）。</li>
+<li><b>Description</b>：一句話說明（建議寫）。</li>
+<li>選 <b>Public</b>／<b>Private</b>（差別見下一章）。</li>
+<li>勾「<b>Add a README file</b>」→ 按「<b>Create repository</b>」。</li>
+<li>完成！網址就是 <code>github.com/帳號/repo名稱</code>。</li>
+</ol>
+</div>
+<div class="how aiway">
+<span class="tag">🤖 AI 建（指揮 Claude Code）</span>
+<div class="say">幫我把這個資料夾建成 GitHub repo，名稱叫 my-first-repo，設為公開，並推上去。</div>
+<p style="font-size:14px">AI 背後執行的其實是一行：</p>
+<pre><code>gh repo create my-first-repo --public --source=. --push</code></pre>
+<p style="font-size:14px">前置條件（做一次就好）：裝 Git 與 GitHub CLI，跑 <code>gh auth login --web</code> 完成設備授權（你只在瀏覽器輸入 8 位數驗證碼，密碼不經過 AI）。</p>
+</div>
+</div>
+
+<!-- ── 7 ── -->
+<h2 id="how-manage">7. 管理你的 Repo：公開／私有、更名、刪除</h2>
+
+<h3>公開 vs 私有</h3>
+<div class="tblbox">
+<table>
+<thead><tr><th></th><th>Public 公開</th><th>Private 私有</th></tr></thead>
+<tbody>
+<tr><td><b>誰看得到原始碼</b></td><td>所有人（含搜尋引擎）</td><td>只有你和受邀的人</td></tr>
+<tr><td><b>別人能 Fork 嗎</b></td><td>能</td><td>外人不能（你邀請的協作者依設定仍可）</td></tr>
+<tr><td><b>免費版能開 Pages 嗎</b></td><td><span class="badge b-ok">能</span></td><td><span class="badge b-warn">不能（要付費方案）</span></td></tr>
+<tr><td><b>適合放</b></td><td>教材、demo、作品集</td><td>未完成品、內部資料</td></tr>
+</tbody>
+</table>
+</div>
+<div class="danger">⚠️ 一句話記住：<b>「用免費 Pages 部署 ＝ 程式一定公開。」</b>所以機密不能寫死在前端；公開前檢查有無個資、名單、未授權素材——公開後就算刪除，別人可能已經下載了。</div>
+<div class="duo">
+<div class="how manual">
+<span class="tag">👋 人工切換公開／私有</span>
+<ol><li>Repo →「<b>Settings</b>」→ 捲到最底「<b>Danger Zone</b>」。</li>
+<li>「Change repository visibility」→ 依指示輸入 Repo 名稱確認。</li></ol>
+</div>
+<div class="how aiway">
+<span class="tag">🤖 AI 做法</span>
+<div class="say">把 my-first-repo 改成私有。</div>
+<pre><code>gh repo edit 帳號/my-first-repo --visibility private --accept-visibility-change-consequences</code></pre>
+<p style="font-size:13px">（新版 gh 要求加最後那個「我知道後果」旗標才肯執行——又是防手滑設計。）</p>
+</div>
+</div>
+
+<h3>更名</h3>
+<div class="duo">
+<div class="how manual">
+<span class="tag">👋 人工做法</span>
+<ol><li>Repo →「<b>Settings</b>」→ 最上方「<b>Repository name</b>」→ 改名 → 按「<b>Rename</b>」。</li></ol>
+</div>
+<div class="how aiway">
+<span class="tag">🤖 AI 做法</span>
+<div class="say">把 my-first-repo 改名成 course-demo。</div>
+<pre><code>gh repo rename course-demo --repo 帳號/my-first-repo</code></pre>
+</div>
+</div>
+<div class="note">📌 <b>改名最大的雷</b>：一般 GitHub 網址會自動轉到新名字，<b>但 Pages 網址是例外</b>——<code>帳號.github.io/舊名/</code> 不會自動轉，發出去的連結、QR Code 全部失效。所以：<b>網址發出去之後就別改名</b>；要改就改完重發。</div>
+
+<h3>刪除</h3>
+<div class="danger">🛑 <b>刪除是高風險動作，請當作不可復原看待！</b>Pages 網站立刻下線；雖然部分 repo 可在 90 天內向 GitHub 申請還原，但被 Fork 過的有諸多限制、協作權限也不會回來。刪之前先想：改成 Private 是不是就夠了？</div>
+<div class="duo">
+<div class="how manual">
+<span class="tag">👋 人工做法</span>
+<ol><li>Repo →「<b>Settings</b>」→ 最底「<b>Danger Zone</b>」→「<b>Delete this repository</b>」。</li>
+<li>依指示<b>手動輸入完整名稱</b>（<code>帳號/repo名</code>）才會真的刪——GitHub 防手滑設計。</li></ol>
+</div>
+<div class="how aiway">
+<span class="tag">🤖 AI 做法</span>
+<div class="say">幫我刪掉 practice-repo。（AI 應該向你再次確認才執行）</div>
+<pre><code>gh repo delete 帳號/practice-repo --yes</code></pre>
+<p style="font-size:14px">第一次會提示權限不足，先補刪除權限（同樣是防手滑）：</p>
+<pre><code>gh auth refresh -h github.com -s delete_repo</code></pre>
+</div>
+</div>
+
+<!-- ── 8 ── -->
+<h2 id="how-vibe">8. 用 Gemini 改自己的網頁＋課堂練習</h2>
+<p>Gemini 網頁版不會直接替你存檔到 GitHub；它負責<b>產生 HTML</b>，你負責在 GitHub 貼上、按 <b>Commit changes</b> 存檔。這就是今天要學會的「AI 寫、自己確認、自己發布」。</p>
+<div class="tblbox">
+<table>
+<thead><tr><th>做什麼</th><th>實際要按／要貼的內容</th></tr></thead>
+<tbody>
+<tr><td><b>① 先告訴 Gemini 要改什麼</b></td><td>開 <a class="plain" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a>，貼下面的指令；把 <code>【】</code> 裡改成自己的主題。</td></tr>
+<tr><td><b>② 請它只交出完整網頁</b></td><td>回覆請只給我一份完整、可直接貼進 <code>index.html</code> 的 HTML。不要解釋、不要 Markdown 符號、不要分段。網頁主題是「【例如：我的工作小工具】」，內容要有標題、三項服務／成果、聯絡方式；文字用繁體中文，配色簡潔、手機也能閱讀。</td></tr>
+<tr><td><b>③ 到 GitHub 貼上</b></td><td>回到<b>自己 Fork 的 Repo</b> → 點 <code>index.html</code> → 右上角鉛筆 ✏️ → 全選原內容、貼上 Gemini 回覆的 HTML。</td></tr>
+<tr><td><b>④ Commit＝存檔</b></td><td>頁面最下方的 <b>Commit changes</b> 不用害怕：它就是「存檔」。摘要可寫 <code>改成我的個人網頁</code> → 按 <b>Commit changes</b>。</td></tr>
+<tr><td><b>⑤ 看成果、再修改</b></td><td>等約 1 分鐘後重整你的 <code>帳號.github.io/sheet-query-demo/</code>。不喜歡就再請 Gemini 修改，重複「貼上 → Commit → 重整」。</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="gold">🎯 <b>課堂練習（今天只做這三件事）：</b>
+① Fork 老師的 <code>sheet-query-demo</code> 並開出自己的 Pages 網址（第 4 章）→
+② 用「匯入 CSV」把課堂發的假資料裝進你的網頁（第 5 章路線 B）→
+③ 用 Gemini 把首頁改成自己的主題，並在 GitHub <b>Commit</b> 後重整看成果。第 6、7 章留作課後自學。</div>
+
+<h3>延伸自學資源</h3>
+<ul style="font-size:14.5px">
+<li><a class="plain" href="https://github.com/AImaster888/sheet-query-demo" target="_blank" rel="noopener">sheet-query-demo 學員包</a>──含更完整的「設定教學」「GitHub 操作說明」「後端 proxy 進階」文件</li>
+<li><a class="plain" href="https://aimaster888.github.io/toolbox/" target="_blank" rel="noopener">工務智庫 Toolbox</a>──它本身就是「Google Sheet ＋ GitHub Pages」做的：我更新試算表，網頁就自動更新。學完本課你就看得懂它怎麼運作了</li>
+<li><a class="plain" href="https://github.com/mjib007/taiwan-law-ai-course/tree/main/2026-06-13_GitHub%E5%85%A5%E9%96%80" target="_blank" rel="noopener">錢世傑老師：GitHub 入門（法律×AI 課程）</a>──另一個領域的同主題教材，可對照著看</li>
+<li><a class="plain" href="https://github.com/mathruffian-dot/claude-code-lazy-packs" target="_blank" rel="noopener">三師爸：Claude Code 懶人包</a>──想深入指揮 AI 的下一步</li>
+</ul>
+
+</section>
+
+<footer>
+AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.1（2026-07-18）<br>
+v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）
+</footer>
+
+</div>
+
+<dialog id="dlg">
+<h3 id="dname"></h3>
+<div id="detail"></div>
+<button onclick="dlg.close()">關閉</button>
+</dialog>
+
+<script>
+/* ── 籤切換（hash 路由）：#tab-* 直接切籤；其他錨點自動切到所屬籤再捲動 ── */
+const TABS=["tab-map","tab-demo","tab-how"];
+function showTab(id,scrollEl){
+ TABS.forEach(t=>{
+  document.getElementById(t).style.display=(t===id)?"block":"none";
+  document.querySelector(`nav.tabs a[data-tab="${t}"]`).classList.toggle("on",t===id);
+ });
+ if(scrollEl){scrollEl.scrollIntoView({behavior:"smooth"});}
+ else{window.scrollTo(0,0);}
+}
+function route(){
+ let h="tab-map";
+ try{h=decodeURIComponent(location.hash.replace("#",""))||"tab-map";}catch(_){}  // 非法 % 轉義時保底回籤一
+ if(TABS.includes(h)){showTab(h);return;}
+ const el=document.getElementById(h);
+ if(el){
+  const sec=el.closest("section.tab");
+  if(sec){showTab(sec.id,el);return;}
+ }
+ showTab("tab-map");
+}
+window.addEventListener("hashchange",route);
+
+/* ══════════ 以下為資料查詢閱讀器（v1.0 原程式，未更動） ══════════ */
+/* 資料源狀態 */
+const statusEl=document.getElementById("status"); /* 不用裸 status：會撞 window.status 導致訊息不顯示 */
+const cfg=window.CONFIG||{};
+let SHEET_ID=cfg.SHEET_ID||"";
+let GID=cfg.GID||"0";
+let mode="sheet";          // "sheet" | "file"
+let allRows=[], columns=[], currentRows=[];
+
+/* 防 XSS：所有要放進表格的內容一律先跳脫 */
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+
+function csvUrl(){
+ return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/export?format=csv&gid=${encodeURIComponent(GID)}&t=${Date.now()}`;
+}
+
+/* --- 三種來源 --- */
+/* --- 自動從網址挑出 SHEET_ID / GID（學員貼整條網址就好） --- */
+function parseSheetInput(){
+ const raw=document.getElementById("inSid").value.trim();
+ const gidBox=document.getElementById("inGid").value.trim();
+ if(!raw) return null;
+ if(gidBox && !/^\d+$/.test(gidBox)) return {error:true, raw};  // GID 只准數字
+ let sid=raw, gid=gidBox||"0";
+ // 是網址 → 抓 /d/ 後面那段
+ const m=raw.match(/\/d\/([a-zA-Z0-9_-]{20,})/);
+ if(m){ sid=m[1]; }
+ // 網址帶 gid → 自動抓（GID 欄位有手填時以手填優先）
+ const g=raw.match(/[?#&]gid=(\d+)/);
+ if(g && !gidBox){ gid=g[1]; }
+ // 貼的不是網址、就當它是純 ID（簡單長度檢查）
+ if(!m && !/^[a-zA-Z0-9_-]{20,}$/.test(sid)) return {error:true, raw};
+ return {sid, gid};
+}
+
+function previewParse(){
+ const box=document.getElementById("parsed");
+ const raw=document.getElementById("inSid").value.trim();
+ if(!raw){ box.innerHTML=""; return; }
+ const p=parseSheetInput();
+ if(!p || p.error){
+  box.innerHTML=`<span class="p-bad">✗ 看不懂這段——請貼整條試算表網址（docs.google.com/spreadsheets/d/…），或 /d/ 後面那串 ID</span>`;
+  return;
+ }
+ box.innerHTML=`<span class="p-ok">✓ 已識別</span>　SHEET_ID：<code>${esc(p.sid)}</code>　GID：<code>${esc(p.gid)}</code>`;
+}
+
+function useCustom(){
+ const p=parseSheetInput();
+ if(!p){alert("請先貼上試算表網址或 SHEET_ID");return;}
+ if(p.error){alert("看不懂你貼的內容。\n請貼整條試算表網址（docs.google.com/spreadsheets/d/…）。");return;}
+ SHEET_ID=p.sid;GID=p.gid;
+ document.getElementById("inGid").value=p.gid;
+ mode="sheet";srcTag.textContent="我的試算表";
+ loadSheet();
+}
+function useDemo(){
+ SHEET_ID=cfg.SHEET_ID||"";GID=cfg.GID||"0";
+ mode="sheet";srcTag.textContent="Demo 資料";
+ loadSheet();
+}
+function useFile(f){
+ if(!f) return;
+ const append=document.getElementById("mergeChk").checked;
+ mode="file";
+ srcTag.textContent=append&&allRows.length ? "已合併："+f.name : "本機檔案："+f.name;
+ statusEl.textContent="解析中...";
+ /* 編碼偵測：先嚴格 UTF-8，失敗自動改 Big5（舊版 Excel 常見），再失敗給友善提示 */
+ const reader=new FileReader();
+ reader.onload=function(e){
+  const buf=e.target.result;
+  let text=null, enc="UTF-8";
+  try{ text=new TextDecoder("utf-8",{fatal:true}).decode(buf); }
+  catch(_){
+   try{ text=new TextDecoder("big5",{fatal:true}).decode(buf); enc="Big5"; }
+   catch(_2){ text=null; }
+  }
+  if(text===null){
+   statusEl.textContent="編碼無法辨識";
+   alert("這個檔案的編碼無法辨識。\n請用 Excel 或 Google Sheets 重新另存為「CSV UTF-8」再匯入。");
+   return;
+  }
+  Papa.parse(text,{header:true,skipEmptyLines:true,complete:function(res){
+   onParsed(res, append);
+   if(enc==="Big5") statusEl.textContent+="（原檔為 Big5，已自動轉換）";
+  }});
+ };
+ reader.onerror=function(){ statusEl.textContent="讀檔失敗"; };
+ reader.readAsArrayBuffer(f);
+}
+function reload(){ mode==="sheet" ? loadSheet() : applyFilters(); }
+
+/* --- 解析完成後共同處理（動態欄位＋合併排序的核心） --- */
+let srcCount=0;   // 已載入的資料來源數
+function onParsed(res, append){
+ const parseWarn=(res.errors&&res.errors.length)?`；⚠️ CSV 有 ${res.errors.length} 處解析問題，資料可能不完整`:"";
+ const newCols=(res.meta.fields||[]).filter(c=>c && c.trim()!=="");
+ const newRows=res.data.filter(x=>Object.values(x).join("").trim()!=="");
+ if(append && allRows.length){
+  // 欄位取聯集（順序以現有為主，新欄位補在後面）
+  newCols.forEach(c=>{ if(!columns.includes(c)) columns.push(c); });
+  allRows=allRows.concat(newRows);
+  srcCount++;
+ }else{
+  columns=newCols; allRows=newRows; srcCount=1;
+ }
+ // 有「期數」欄 → 依期數排序;同期數再依「提送次數」排(多次提送排在一起,順序正確)
+ if(columns.includes("期數")){
+  allRows.sort((a,b)=>{
+   const d=(parseFloat(a["期數"])||0)-(parseFloat(b["期數"])||0);
+   if(d!==0) return d;
+   return (parseFloat(a["提送次數"])||0)-(parseFloat(b["提送次數"])||0);
+  });
+ }
+ allRows.forEach(r=>{ r._search=columns.map(c=>r[c]||"").join(" ").toLowerCase(); });
+ setup.style.display="none";buildHead();
+ setupSmartFilters();
+ applyFilters();
+ statusEl.textContent=`已載入 ${allRows.length} 筆`+(srcCount>1?`（合併 ${srcCount} 個來源）`:"")+` (${new Date().toLocaleTimeString()})`+parseWarn;
+}
+
+function buildHead(){
+ thead.innerHTML="<tr>"+columns.map(c=>`<th>${esc(c)}</th>`).join("")+"</tr>";
+}
+
+/* 有「審查結果」「逾期狀況」欄才顯示對應篩選（工作月報模式） */
+function setupSmartFilters(){
+ const fr=document.getElementById("filterResult");
+ const fl=document.getElementById("filterLate");
+ if(columns.includes("審查結果")){
+  fr.style.display="";
+  fr.innerHTML='<option value="">全部審查結果</option>';
+  [...new Set(allRows.map(x=>x["審查結果"]).filter(Boolean).sort())]
+  .forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;fr.appendChild(o);});
+ } else fr.style.display="none";
+ fl.style.display=columns.includes("逾期狀況")?"":"none";
+}
+
+/* 徽章：只套在特定欄位（內容一律 esc 跳脫） */
+function cellHtml(col,v){
+ v=esc((v||"").trim());
+ if(col==="審查結果"){
+  if(v.includes("同意")) return `<span class="badge b-ok">${v}</span>`;
+  if(v.includes("審退")) return `<span class="badge b-rej">${v}</span>`;
+  if(v.includes("審查中")) return `<span class="badge b-late">${v}</span>`;
+  return `<span class="badge b-none">${v||"—"}</span>`;
+ }
+ if(col==="提送次數"){
+  if(v && v!=="1") return `<span class="badge b-late">第${v}次</span>`;
+  return v?`第${v}次`:"";
+ }
+ if(col==="逾期狀況"){
+  if(v.startsWith("逾期")) return `<span class="badge b-late">${v}</span>`;
+  if(v==="無逾期") return `<span class="badge b-ok">${v}</span>`;
+  return `<span class="badge b-none">${v||"—"}</span>`;
+ }
+ if(col.includes("文號")) return `<span style="font-family:ui-monospace,monospace;font-size:12.5px">${v}</span>`;
+ return v;
+}
+
+function render(rows){
+ currentRows=rows;
+ tbody.innerHTML="";
+ if(!rows.length){tbody.innerHTML=`<tr><td colspan="${columns.length||1}">沒有資料</td></tr>`;count.textContent="";return;}
+ rows.forEach((r,idx)=>{
+  const tr=document.createElement("tr");
+  tr.innerHTML=columns.map((c,i)=>{
+   const v=cellHtml(c,r[c]);
+   return i===1
+    ?`<td><a href="#" onclick="showDetail(${idx});return false;">${v||esc(r[c]||"")}</a></td>`
+    :`<td>${v}</td>`;
+  }).join("");
+  tbody.appendChild(tr);
+ });
+ count.textContent=`共 ${rows.length} / ${allRows.length} 筆`;
+}
+
+function showDetail(i){
+ const r=currentRows[i]; if(!r) return;
+ dname.textContent=r[columns[1]]||r[columns[0]]||"";
+ detail.innerHTML=columns.map(k=>`<b>${esc(k)}</b>：${esc(r[k]||"—")}<br>`).join("");
+ dlg.showModal();
+}
+
+function applyFilters(){
+ const kw=keyword.value.trim().toLowerCase();
+ const fr=document.getElementById("filterResult");
+ const fl=document.getElementById("filterLate");
+ const rows=allRows.filter(r=>{
+  if(fr.style.display!=="none" && fr.value && r["審查結果"]!==fr.value) return false;
+  if(fl.style.display!=="none" && fl.value){
+   const late=(r["逾期狀況"]||"").startsWith("逾期");
+   if(fl.value==="LATE" && !late) return false;
+   if(fl.value==="ONTIME" && (r["逾期狀況"]||"").trim()!=="無逾期") return false;
+  }
+  return !kw || (r._search||"").includes(kw);
+ });
+ render(rows);
+}
+
+/* --- AI 分析（BYOK）：金鑰只在記憶體，只直連官方 API --- */
+/* 快捷提問：把完整問句填進輸入框再送出，讓學員看見「好問題長什麼樣」 */
+const PRESETS={
+ summary:"請用白話總結這批資料的重點：共幾期、涵蓋期間、提送狀況整體如何、有沒有需要注意的地方。",
+ late:"請統計逾期情形：共逾期幾次、各逾期幾日、集中在哪些月份，並判斷逾期有沒有惡化或改善的趨勢。",
+ reject:"請整理被審退的期別：哪幾期被審退、補送花了幾天、補送後的結果如何。",
+ draft:"請把這批資料寫成一段約150字、可直接貼進公務報告的文字：語氣正式，包含涵蓋期間、提送準時情形、逾期與審退的統計。"
+};
+function quickAsk(k){
+ document.getElementById("aiQ").value=PRESETS[k]||"";
+ askAI();
+}
+
+async function askAI(){
+ const key=document.getElementById("aiKey").value.trim();
+ if(!key){alert("請先貼上你的 API Key（金鑰不會被儲存）");return;}
+ if(!currentRows.length){alert("目前沒有資料可以分析，請先載入資料");return;}
+ const provider=document.getElementById("aiProvider").value;
+ const btn=document.getElementById("aiBtn");
+ const out=document.getElementById("aiOut");
+ // 只送「目前篩選出的資料」，最多 80 筆（最小揭露＋省 token）
+ const rows=currentRows.slice(0,80);
+ const tsv=[columns.join("\t")].concat(rows.map(r=>columns.map(c=>String(r[c]||"").replace(/\t/g," ")).join("\t"))).join("\n");
+ const q=document.getElementById("aiQ").value.trim()
+   ||"請用白話總結這份資料的重點，並指出值得注意的模式（例如逾期、審退的情形）。";
+ const prompt=`以下是一份資料表（TSV 格式，共 ${rows.length} 筆${currentRows.length>80?"，已截取前 80 筆":""}）：\n${tsv}\n\n問題：${q}\n請用繁體中文回答，精簡扼要。`;
+ btn.disabled=true;out.style.display="block";out.textContent="AI 思考中…";
+ try{
+  let text;
+  if(provider==="gemini"){
+   const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="+encodeURIComponent(key),{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+   const d=await r.json();
+   if(d.error) throw new Error(d.error.message||"Gemini 回傳錯誤");
+   text=(d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("")||"（沒有回應內容）";
+  }else{
+   const r=await fetch("https://api.openai.com/v1/chat/completions",{
+    method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
+    body:JSON.stringify({model:"gpt-5.4-mini",messages:[{role:"user",content:prompt}]})});
+   const d=await r.json();
+   if(d.error) throw new Error(d.error.message||"OpenAI 回傳錯誤");
+   text=d.choices?.[0]?.message?.content||"（沒有回應內容）";
+  }
+  out.textContent=text;   // textContent＝AI 回覆也不當 HTML 執行，防注入
+ }catch(e){
+  out.textContent="呼叫失敗："+e.message+"\n請確認：Key 是否正確、額度是否足夠、網路是否正常。";
+ }
+ btn.disabled=false;
+}
+
+function loadSheet(){
+ if(!SHEET_ID){setup.style.display="block";statusEl.textContent="尚未設定";return;}
+ setup.style.display="none";
+ statusEl.textContent="讀取中...";
+ Papa.parse(csvUrl(),{download:true,header:true,skipEmptyLines:true,complete:onParsed,
+  error:()=>{
+   statusEl.textContent="讀取失敗";
+   tbody.innerHTML=`<tr><td colspan="${columns.length||1}">讀不到資料：請確認 SHEET_ID 正確、且試算表已設「知道連結的任何人／檢視者」。</td></tr>`;
+  }});
+}
+
+keyword.oninput=applyFilters;
+filterResult.onchange=applyFilters;
+filterLate.onchange=applyFilters;
+
+route();
+loadSheet();
+setInterval(()=>{if(mode==="sheet"&&SHEET_ID)loadSheet();},60000);
+</script>
+</body>
+</html>
