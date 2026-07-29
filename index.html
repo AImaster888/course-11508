@@ -243,7 +243,7 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 
 <div class="note" style="margin-top:6px">
 🔧 這是「<b>工作月報查詢</b>」示範工具：同一支程式，Google 試算表／本機 CSV 都能讀，還能叫 AI 分析。
-想把它變成你自己的 → <a class="plain" href="#how-fork">📖 第 4 章：Fork 老師的成品</a>。
+想把它變成你自己的 → <a class="plain" href="#how-fork">📖 第 5 章：Fork 老師的成品</a>。
 想看我日常真的在用的 28 個工具 → <a class="plain" href="https://aimaster888.github.io/toolbox/" target="_blank" rel="noopener">工務智庫 Toolbox</a>。
 </div>
 
@@ -328,6 +328,7 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <ol style="margin:6px 0 0;padding-left:22px">
 <li><a class="plain" href="#how-why">為什麼一定要學 GitHub？</a></li>
 <li><a class="plain" href="#how-reg">註冊 GitHub 帳號</a></li>
+<li><a class="plain" href="#how-git">Git 與 GitHub：誰做什麼</a></li>
 <li><a class="plain" href="#how-concepts">五個核心概念</a></li>
 <li><a class="plain" href="#how-fork">Fork 老師的成品（10 分鐘有自己的網頁）</a></li>
 <li><a class="plain" href="#how-data">接上你自己的資料：試算表權限與 ID</a></li>
@@ -357,7 +358,7 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <span class="arr">→</span>
 <span class="step save">⏪ 讀檔回存檔點<br><small>（毫髮無傷）</small></span>
 </div>
-<div class="gold">💡 學 GitHub 不是為了背指令，是為了給自己買一顆<b>「後悔藥」</b>。懂得掌控版本的人，才能放心讓 AI 幫你做事。</div>
+<div class="gold">💡 學 GitHub 不是為了背指令，是為了給自己買一顆<b>「後悔藥」</b>（這顆藥其實是 <b>Git</b> 給的，第 3 章說明）。懂得掌控版本的人，才能放心讓 AI 幫你做事。</div>
 
 <!-- ── 2 ── -->
 <h2 id="how-reg">2. 註冊 GitHub 帳號（約 3 分鐘）</h2>
@@ -371,7 +372,70 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 📌 <b>email 一定要驗證</b>，沒驗證不能建立或 Fork repo。建議之後開兩步驟驗證（2FA）。</div>
 
 <!-- ── 3 ── -->
-<h2 id="how-concepts">3. 五個核心概念</h2>
+<h2 id="how-git">3. Git 與 GitHub：誰做什麼</h2>
+<p>前面兩章一直在說「GitHub」，但真正幫你記版本的，是它底下一個叫 <b>Git</b> 的東西。兩個名字常被混著用，先分清楚：</p>
+<div class="cards">
+<div class="card">
+<b class="title">🔧 Git ＝ 版本控制的引擎</b>
+<div class="plain">白話：幫你<b>記錄每一次修改</b>的工具本體。</div>
+<ul><li>裝在自己電腦裡就能跑，<b>斷網也能用</b>，不一定要有 GitHub。</li><li>負責：存版本、比對差異、回到舊版、開分支、合併。</li></ul>
+</div>
+<div class="card">
+<b class="title">☁️ GitHub ＝ 放 Git 的雲端平台</b>
+<div class="plain">白話：把這份歷史<b>搬上雲端</b>，再加上給人看、一起改的介面。</div>
+<ul><li>建在 Git 之上，多出來的是：網頁介面、Fork、Pull Request、權限管理、Pages 發布。</li><li>它存的內容，<b>就是 Git 的版本歷史</b>。</li></ul>
+</div>
+</div>
+
+<div class="note">📌 <b>三句話講完關係：</b><br>
+① 沒有 GitHub，Git 照樣跑──它本來就是本機工具。<br>
+② 沒有 Git，GitHub 就沒東西可存──GitHub 存的就是 Git 的歷史。<br>
+③ 所以第 1 章那顆<b>「後悔藥」是 Git 給的</b>；GitHub 額外給的是<b>雲端備份、別人看得到、能協作</b>。</div>
+
+<div class="gold">🔑 <b>今天最該懂的一句：</b>第 9 章你會在 GitHub 網頁上改 <code>index.html</code>、按 <b>Commit changes</b>。那顆按鈕<b>不是「儲存」</b>──是 GitHub 在雲端<b>替你執行了一次 Git commit</b>。你沒裝 Git、沒打過任何指令，但 <b>Git 一直在運作</b>。</div>
+
+<h3>哪個字是誰的？</h3>
+<div class="tblbox">
+<table>
+<thead><tr><th>你會看到的字</th><th>誰的功能</th><th>白話</th></tr></thead>
+<tbody>
+<tr><td><b>Repository</b></td><td>Git 的概念，GitHub 幫你放雲端</td><td>專案資料夾＋它的完整歷史</td></tr>
+<tr><td><b>Commit</b></td><td><b>Git</b></td><td>存一次檔，留一筆回得去的紀錄</td></tr>
+<tr><td><b>Branch</b></td><td><b>Git</b></td><td>開一個平行宇宙試改</td></tr>
+<tr><td><b>Merge</b></td><td><b>Git</b></td><td>把平行宇宙的成果合回主線</td></tr>
+<tr><td><b>Push／Pull</b></td><td>Git 指令，對象是 GitHub</td><td>本機和雲端互相同步</td></tr>
+<tr><td><b>Fork、Pull Request、Issues、Pages</b></td><td><b>GitHub 平台</b></td><td>複製別人的、申請合併審查、追蹤待辦、發布網站</td></tr>
+</tbody>
+</table>
+</div>
+<p>所以下一章的五個核心概念，<b>四個是 Git 的，只有 Fork 是 GitHub 的</b>。</p>
+
+<h3>兩條路，同一份歷史</h3>
+<p><b>路線一：本機做（工程師的日常）</b></p>
+<div class="flow">
+<span class="step">🖥 在電腦改檔案</span>
+<span class="arr">→</span>
+<span class="step save">git commit<br><small>（Git 記下一個版本）</small></span>
+<span class="arr">→</span>
+<span class="step">git push</span>
+<span class="arr">→</span>
+<span class="step">☁️ 上到 GitHub</span>
+</div>
+<p><b>路線二：網頁做（今天你走這條）</b></p>
+<div class="flow">
+<span class="step">🌐 在 GitHub 網頁改檔案</span>
+<span class="arr">→</span>
+<span class="step save">按 Commit changes<br><small>（GitHub 在雲端替你記一筆）</small></span>
+<span class="arr">→</span>
+<span class="step">☁️ 直接存進 GitHub</span>
+</div>
+<div class="note">📌 兩條路留下的是<b>同一份歷史</b>。日後想在自己電腦上開發、跑程式或批次修改，用 <code>git clone</code> 把同一個 Repo 抓下來，再用 <code>pull</code>／<code>push</code> 跟 GitHub 同步就好。</div>
+
+<div class="gold">✅ 不會 Git 指令沒關係，但要記住：<b>Commit 不是「儲存」，是「留下一個回得去的版本」。</b><br>
+想看證據：打開任何一個 Repo 首頁點 <b>Commits</b>，每一筆改了哪些檔案、哪幾行紅的刪、綠的加，全都在──那就是 <b>Git 的歷史紀錄</b>，GitHub 只是把它畫成好看的網頁給你看。</div>
+
+<!-- ── 4 ── -->
+<h2 id="how-concepts">4. 五個核心概念</h2>
 <p>不用背指令，但這五個名詞要在腦中有畫面，才能指揮 AI：</p>
 <div class="cards">
 <div class="card">
@@ -401,8 +465,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </div>
 </div>
 
-<!-- ── 4 ── -->
-<h2 id="how-fork">4. Fork 老師的成品（10 分鐘，先有自己的網頁）</h2>
+<!-- ── 5 ── -->
+<h2 id="how-fork">5. Fork 老師的成品（10 分鐘，先有自己的網頁）</h2>
 <p>教學 Repo：<a class="plain" href="https://github.com/AImaster888/sheet-query-demo" target="_blank" rel="noopener"><b>github.com/AImaster888/sheet-query-demo</b></a>（就是籤二那個工具的完整原始碼＋教學文件）</p>
 <ol style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px 14px 40px">
 <li>登入 GitHub，打開上面的 Repo 網址。</li>
@@ -414,8 +478,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <div class="gold">✅ 到這裡你已經完成「Fork 別人的專案 → 發布成自己的網頁」。<b>這一頁網頁掛在你的帳號下，跟老師無關了</b>——你怎麼改都不會影響別人，別人也改不到你的。</div>
 <div class="note">📌 <b>Repo 和 Pages 是兩個東西</b>：Repo（<code>github.com/…</code>）放原始碼；Pages（<code>…github.io/…</code>）是跑起來的網站。Pages 是讀 Repo 的檔案發布出來的成品。</div>
 
-<!-- ── 5 ── -->
-<h2 id="how-data">5. 接上你自己的資料：試算表權限與 ID</h2>
+<!-- ── 6 ── -->
+<h2 id="how-data">6. 接上你自己的資料：試算表權限與 ID</h2>
 <p>Fork 很快，<b>90% 的人卡在這一章</b>。先選路，再動手：</p>
 <div class="tblbox">
 <table>
@@ -462,8 +526,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <div class="danger">⚠️ <b>資安紅線：</b>「知道連結的任何人可檢視」＝實質半公開。<b>個資、公務機密絕對不能放</b>進走路線 A 的試算表。
 另外要知道：純前端網頁「藏不住」資料——瀏覽器讀得到的東西，訪客按 F12 也拿得到。真的要藏資料要走後端（進階，見 Repo 裡的 <code>apps-script-proxy.gs</code>）。</div>
 
-<!-- ── 6 ── -->
-<h2 id="how-create">6. 自己從零建 Repo：人工建 vs AI 建</h2>
+<!-- ── 7 ── -->
+<h2 id="how-create">7. 自己從零建 Repo：人工建 vs AI 建</h2>
 <p>Fork 是複製別人的；自己的東西要上線，就要會<b>建自己的 Repo</b>。兩種都要會：人工建讓你理解每個選項，AI 建是日常姿勢。</p>
 <div class="duo">
 <div class="how manual">
@@ -486,8 +550,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </div>
 </div>
 
-<!-- ── 7 ── -->
-<h2 id="how-manage">7. 管理你的 Repo：公開／私有、更名、刪除</h2>
+<!-- ── 8 ── -->
+<h2 id="how-manage">8. 管理你的 Repo：公開／私有、更名、刪除</h2>
 
 <h3>公開 vs 私有</h3>
 <div class="tblbox">
@@ -547,8 +611,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </div>
 </div>
 
-<!-- ── 8 ── -->
-<h2 id="how-vibe">8. 用 Gemini 改自己的網頁＋課堂練習</h2>
+<!-- ── 9 ── -->
+<h2 id="how-vibe">9. 用 Gemini 改自己的網頁＋課堂練習</h2>
 <p>Gemini 網頁版不會直接替你存檔到 GitHub；它負責<b>產生 HTML</b>，你負責在 GitHub 貼上、按 <b>Commit changes</b> 存檔。這就是今天要學會的「AI 寫、自己確認、自己發布」。</p>
 <div class="tblbox">
 <table>
@@ -557,16 +621,16 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <tr><td><b>① 先告訴 Gemini 要改什麼</b></td><td>開 <a class="plain" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a>，貼下面的指令；把 <code>【】</code> 裡改成自己的主題。</td></tr>
 <tr><td><b>② 請它只交出完整網頁</b></td><td>回覆請只給我一份完整、可直接貼進 <code>index.html</code> 的 HTML。不要解釋、不要 Markdown 符號、不要分段。網頁主題是「【例如：我的工作小工具】」，內容要有標題、三項服務／成果、聯絡方式；文字用繁體中文，配色簡潔、手機也能閱讀。</td></tr>
 <tr><td><b>③ 到 GitHub 貼上</b></td><td>回到<b>自己 Fork 的 Repo</b> → 點 <code>index.html</code> → 右上角鉛筆 ✏️ → 全選原內容、貼上 Gemini 回覆的 HTML。</td></tr>
-<tr><td><b>④ Commit＝存檔</b></td><td>頁面最下方的 <b>Commit changes</b> 不用害怕：它就是「存檔」。摘要可寫 <code>改成我的個人網頁</code> → 按 <b>Commit changes</b>。</td></tr>
+<tr><td><b>④ Commit＝存檔</b></td><td>頁面最下方的 <b>Commit changes</b> 不用害怕：它就是「存檔」──更精確地說，是 <b>Git 幫你記下一個回得去的版本</b>（第 3 章）。摘要可寫 <code>改成我的個人網頁</code> → 按 <b>Commit changes</b>。</td></tr>
 <tr><td><b>⑤ 看成果、再修改</b></td><td>等約 1 分鐘後重整你的 <code>帳號.github.io/sheet-query-demo/</code>。不喜歡就再請 Gemini 修改，重複「貼上 → Commit → 重整」。</td></tr>
 </tbody>
 </table>
 </div>
 
 <div class="gold">🎯 <b>課堂練習（今天只做這三件事）：</b>
-① Fork 老師的 <code>sheet-query-demo</code> 並開出自己的 Pages 網址（第 4 章）→
-② 用「匯入 CSV」把課堂發的假資料裝進你的網頁（第 5 章路線 B）→
-③ 用 Gemini 把首頁改成自己的主題，並在 GitHub <b>Commit</b> 後重整看成果。第 6、7 章留作課後自學。</div>
+① Fork 老師的 <code>sheet-query-demo</code> 並開出自己的 Pages 網址（第 5 章）→
+② 用「匯入 CSV」把課堂發的假資料裝進你的網頁（第 6 章路線 B）→
+③ 用 Gemini 把首頁改成自己的主題，並在 GitHub <b>Commit</b> 後重整看成果。第 7、8 章留作課後自學。</div>
 
 <h3>延伸自學資源</h3>
 <ul style="font-size:14.5px">
@@ -579,8 +643,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </section>
 
 <footer>
-AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.1（2026-07-18）<br>
-v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）
+AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.2（2026-07-29）<br>
+v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）
 </footer>
 
 </div>
