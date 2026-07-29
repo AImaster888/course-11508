@@ -3,7 +3,7 @@
 ============================================================
  課程入口網站 ─ 機關研習教材（三籤單頁版）
  版次：v1.1（2026-07-19）｜v1.1 去識別化（移除單位名）
- 版次：v2.3（2026-07-29）
+ 版次：v2.4（2026-07-30）
  版本歷程：
    v1.0 2026-07-13 資料查詢閱讀器 Demo（單頁工具）
    v2.0 2026-07-18 合併為三籤課程入口：
@@ -15,6 +15,12 @@
         順延為 4~9（id 不變），並補第 1、9 章與該章的呼應
    v2.3 2026-07-29 修正：GID 欄位殘留上次載入的舊值會蓋掉新網址的 gid，
         換試算表時只顯示「讀取失敗」；改為網址帶 gid 時一律以網址為準
+   v2.4 2026-07-30 認證章節改版：AI Boost Bites 兩堂已無法報名，改推
+        Gemini Certification for Educators 與 Generative AI for Educators
+        （Google for Education）；話術由「今天 10 分鐘拿一張」改為「不必
+        今天考，課堂只帶登入與報名流程，回去自己完成」；措辭收緊：「Google
+        掛名證書／AI 入門證照」改為「Google for Education 課程證書」，並註明
+        課程以教育情境舉例
  備份：index.html.bak-20260718（v1.0）、github-tutorial.html.bak-20260718
 ============================================================
  籤切換：網址 hash 路由（#tab-map / #tab-demo / #tab-how），
@@ -201,7 +207,7 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <p style="font-size:14.5px">用 GitHub Pages 建個人網頁：數位履歷、成果展示、知識管理平台。
 完整教學在 <a class="plain" href="#how-why">📖 怎麼做到</a>。</p></div>
 <div class="card"><b class="title"><span class="mapnum">四</span>AI 數位能力認證</b>
-<p style="font-size:14.5px">適合非資訊背景同仁的 AI 入門證照：<b>先花 10 分鐘免費拿一張</b>，再看要不要往上爬。
+<p style="font-size:14.5px">適合非資訊背景同仁的 AI 入門課程證書：<b>不必今天考</b>，先知道有哪些路徑、怎麼登入報名，回去自己完成。
 推薦清單 → <a class="plain" href="#cert-plan">本頁下方</a></p></div>
 <div class="card"><b class="title"><span class="mapnum">五</span>AI 實務應用案例</b>
 <p style="font-size:14.5px">會議紀錄整理、公文潤稿、工程查核紀錄、簡報製作、法規查詢、資料彙整。
@@ -211,23 +217,22 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <p style="font-size:14.5px">同一套思路的進階版：Telegram／LINE 機器人（工程查核拍照丟群組自動整理）、n8n 自動化、雲端部署。今天看得到方向，門檻留給有興趣的人。</p></div>
 </div>
 
-<h2 id="cert-plan">AI 認證怎麼考：先快速拿一張，再看要不要往上爬</h2>
+<h2 id="cert-plan">AI 認證怎麼考：不必今天考，先知道路徑</h2>
 <div class="tblbox">
 <table>
 <thead><tr><th>路線</th><th>認證</th><th>時間／費用</th><th>適合誰</th></tr></thead>
 <tbody>
-<tr><td><b>🥇 第一張（今天就能拿）</b></td><td><b>AI Boost Bites: Intro to NotebookLM</b><br><a class="plain" href="https://www.skills.google/course_templates/1418" target="_blank" rel="noopener">skills.google · 課程 1418</a></td><td>線上約 <b>10 分鐘</b>、<b>免費</b></td><td>所有人。Google 帳號登入即可上，看完短片答題就發 badge</td></tr>
-<tr><td><b>🥈 第二張（順手考完）</b></td><td><b>AI Boost Bites: NotebookLM Reports</b><br><a class="plain" href="https://www.skills.google/course_templates/1466" target="_blank" rel="noopener">skills.google · 課程 1466</a></td><td>線上約 <b>10 分鐘</b>、<b>免費</b></td><td>接續上一堂，學怎麼讓 NotebookLM 產出報告</td></tr>
-<tr><td>想再紮實一點</td><td>Generative AI for Educators<br>Google × MIT 合作</td><td>線上約 2 小時、免費</td><td>所有人。不用寫程式，看影片＋小測驗，當天拿 Google 掛名證書</td></tr>
+<tr><td><b>入門推薦</b></td><td><b>Gemini Certification for Educators</b><br>Google for Education</td><td>線上、<b>免費</b></td><td>所有人（課程以<b>教育情境</b>舉例，非教育工作者一樣能學、能拿證書）。Google 帳號登入即可開始，完成後取得 <b>Google for Education 課程證書</b></td></tr>
+<tr><td><b>接著考</b></td><td><b>Generative AI for Educators</b><br>Google for Education</td><td>線上約 2 小時、<b>免費</b></td><td>所有人。不用寫程式，看影片＋小測驗，完成後取得 <b>Google for Education 課程證書</b></td></tr>
 <tr><td>進階：自動化</td><td>n8n Course Level 1</td><td>線上數小時、免費</td><td>想把例行雜事交給機器的人</td></tr>
 <tr><td>進階：AI 開發</td><td>Claude Code in Action<br>Anthropic Education</td><td>線上數小時、免費</td><td>想認真用 AI 寫工具的人（原廠證書，含金量最高）</td></tr>
 <tr><td>官方認證</td><td>iPAS AI 應用規劃師（經濟部）</td><td>需報名筆試、每年固定場次</td><td>想取得國內官方認證者，可自行評估</td></tr>
 </tbody>
 </table>
 </div>
-<p style="font-size:14px">💬 <b>先拿上面那兩張就好</b>——各 10 分鐘、免費、不用寫程式，今天課後就能考完帶走兩個 badge。
+<p style="font-size:14px">💬 <b>這兩張不必今天考</b>——課堂上只帶大家<b>登入、看懂報名與考試流程</b>，實際各要花一點時間（第二張約 2 小時），回去自己完成就好。
 課程內容以英文為主，可用瀏覽器的翻譯或字幕輔助；要有 Google 帳號登入。
-行有餘力再考 2 小時那張（講師考過，證書見<a class="plain" href="about.html">講師介紹</a>），其餘等有需要再說。</p>
+上面兩張講師都考過（證書見<a class="plain" href="about.html">講師介紹</a>），下面三項等有需要再說。</p>
 
 <h2>公務員最常見的三個疑慮，先講清楚</h2>
 <div class="note">
@@ -647,8 +652,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </section>
 
 <footer>
-AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.3（2026-07-29）<br>
-v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）
+AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.4（2026-07-30）<br>
+v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）
 </footer>
 
 </div>
