@@ -267,7 +267,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </div>
 
 <div id="setup" class="setup">
-<b>👋 還沒有資料</b>：下面兩條路二選一——貼上你的 Google 試算表網址，按<b>「載入我的試算表」</b>；或直接按 <b>「📂 匯入 CSV」</b> 選一個檔案。
+<b>👋 還沒有資料</b>：下面兩條路二選一——貼上你的 Google 試算表網址，按<b>「載入我的試算表」</b>；或直接按 <b>「📂 匯入 CSV」</b> 選一個檔案。<br>
+沒有自己的試算表？<button type="button" class="demo-btn" style="padding:4px 10px;font-size:13px" onclick="copyDemoUrl(this)">📋 複製範例試算表網址</button> 貼到上面欄位、按「載入我的試算表」，就能看到範例資料長什麼樣子。
 </div>
 
 <!-- 三種資料來源 -->
@@ -672,8 +673,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </section>
 
 <footer>
-AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.6（2026-08-22）<br>
-v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）→ v2.5 品牌名稱改為「工務小幫手」，工具數量改為「30 個以上，持續更新中」（08-22）→ v2.6 第 7 章補「裝 Git 與 GitHub CLI」人工／AI 兩種裝法（08-22）
+AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.7（2026-08-22）<br>
+v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）→ v2.5 品牌名稱改為「工務小幫手」，工具數量改為「30 個以上，持續更新中」（08-22）→ v2.6 第 7 章補「裝 Git 與 GitHub CLI」人工／AI 兩種裝法（08-22）→ v2.7 成品直接玩加上範例試算表網址一鍵複製（08-22）
 </footer>
 
 </div>
@@ -716,6 +717,18 @@ let SHEET_ID=cfg.SHEET_ID||"";
 let GID=cfg.GID||"0";
 let mode="sheet";          // "sheet" | "file"
 let allRows=[], columns=[], currentRows=[];
+
+/* 「成品直接玩」範例試算表：讓沒有自己資料的訪客也能一鍵複製網址試玩 */
+const DEMO_SHEET_URL="https://docs.google.com/spreadsheets/d/1XbOK3q4CF4wYIPloQEU4bPOGEUkWtAw5gwNz4HwP55g/edit?gid=2048591611#gid=2048591611";
+function copyDemoUrl(btn){
+ const old=btn.textContent;
+ navigator.clipboard.writeText(DEMO_SHEET_URL).then(()=>{
+  btn.textContent="✓ 已複製，貼到上面欄位吧";
+  setTimeout(()=>{btn.textContent=old;},2000);
+ }).catch(()=>{
+  prompt("複製失敗，請手動複製這段網址：",DEMO_SHEET_URL);
+ });
+}
 
 /* 防 XSS：所有要放進表格的內容一律先跳脫 */
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
