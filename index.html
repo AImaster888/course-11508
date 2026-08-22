@@ -557,7 +557,25 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <div class="say">幫我把這個資料夾建成 GitHub repo，名稱叫 my-first-repo，設為公開，並推上去。</div>
 <p style="font-size:14px">AI 背後執行的其實是一行：</p>
 <pre><code>gh repo create my-first-repo --public --source=. --push</code></pre>
-<p style="font-size:14px">前置條件（做一次就好）：裝 Git 與 GitHub CLI，跑 <code>gh auth login --web</code> 完成設備授權（你只在瀏覽器輸入 8 位數驗證碼，密碼不經過 AI）。</p>
+<p style="font-size:14px">前置條件（做一次就好，怎麼裝見下面）：裝 Git 與 GitHub CLI，跑 <code>gh auth login --web</code> 完成設備授權（你只在瀏覽器輸入 8 位數驗證碼，密碼不經過 AI）。</p>
+</div>
+</div>
+
+<div class="note">📌 <b>裝 Git 這件事跟你的 GitHub 帳號無關</b>──第 2 章註冊的是雲端身分，不會讓你的電腦多出 Git。想走上面「🤖 AI 建」這條路，電腦要另外裝好 <b>Git</b> 和 <b>GitHub CLI</b> 這兩套本機軟體，AI 才有工具可以指揮。只留在 GitHub 網頁上操作（人工建、第 5、6、9 章的路線）都不需要裝這些。</div>
+<div class="duo">
+<div class="how manual">
+<span class="tag">👋 人工裝</span>
+<ol>
+<li>裝 Git：<a class="plain" href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a> → 抓你系統對應的安裝檔 → 一路 Next 裝完（Windows 選預設值即可）。</li>
+<li>裝 GitHub CLI：<a class="plain" href="https://cli.github.com" target="_blank" rel="noopener">cli.github.com</a> → 抓對應系統的安裝檔 → 裝完。</li>
+<li>打開終端機（Windows 用 PowerShell）輸入 <code>git --version</code> 和 <code>gh --version</code>，有印出版本號就是裝好了。</li>
+<li>跑 <code>gh auth login --web</code>，瀏覽器跳出 8 位數驗證碼、貼上去即完成授權。</li>
+</ol>
+</div>
+<div class="how aiway">
+<span class="tag">🤖 AI 裝（指揮 Claude Code）</span>
+<div class="say">幫我檢查電腦有沒有裝 Git 和 GitHub CLI，沒有的話幫我裝好。</div>
+<p style="font-size:14px">Claude Code 會自己判斷你的作業系統，跑對應的安裝指令（Windows 常見是 <code>winget install Git.Git</code>、<code>winget install GitHub.cli</code>）。裝完還是要自己跑一次 <code>gh auth login --web</code>──瀏覽器跳出的驗證碼要你自己看、自己貼，這步 AI 按不到。</p>
 </div>
 </div>
 
@@ -654,8 +672,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </section>
 
 <footer>
-AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.5（2026-08-22）<br>
-v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）→ v2.5 品牌名稱改為「工務小幫手」，工具數量改為「30 個以上，持續更新中」（08-22）
+AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.6（2026-08-22）<br>
+v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）→ v2.5 品牌名稱改為「工務小幫手」，工具數量改為「30 個以上，持續更新中」（08-22）→ v2.6 第 7 章補「裝 Git 與 GitHub CLI」人工／AI 兩種裝法（08-22）
 </footer>
 
 </div>
