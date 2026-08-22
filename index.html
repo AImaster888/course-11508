@@ -346,8 +346,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <li><a class="plain" href="#how-fork">Fork 老師的成品（10 分鐘有自己的網頁）</a></li>
 <li><a class="plain" href="#how-data">接上你自己的資料：試算表權限與 ID</a></li>
 <li><a class="plain" href="#how-create">自己從零建 Repo：人工建 vs AI 建</a></li>
+<li><a class="plain" href="#how-vibe">用 Gemini 建立自己的網頁＋課堂練習</a></li>
 <li><a class="plain" href="#how-manage">管理你的 Repo：公開／私有、更名、刪除</a></li>
-<li><a class="plain" href="#how-vibe">用 Gemini 改自己的網頁＋課堂練習</a></li>
 </ol>
 </div>
 
@@ -405,7 +405,7 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 ② 沒有 Git，GitHub 就沒東西可存──GitHub 存的就是 Git 的歷史。<br>
 ③ 所以第 1 章那顆<b>「後悔藥」是 Git 給的</b>；GitHub 額外給的是<b>雲端備份、別人看得到、能協作</b>。</div>
 
-<div class="gold">🔑 <b>今天最該懂的一句：</b>第 9 章你會在 GitHub 網頁上改 <code>index.html</code>、按 <b>Commit changes</b>。那顆按鈕<b>不是「儲存」</b>──是 GitHub 在雲端<b>替你執行了一次 Git commit</b>。你沒裝 Git、沒打過任何指令，但 <b>Git 一直在運作</b>。</div>
+<div class="gold">🔑 <b>今天最該懂的一句：</b>第 8 章你會在 GitHub 網頁上改 <code>index.html</code>、按 <b>Commit changes</b>。那顆按鈕<b>不是「儲存」</b>──是 GitHub 在雲端<b>替你執行了一次 Git commit</b>。你沒裝 Git、沒打過任何指令，但 <b>Git 一直在運作</b>。</div>
 
 <h3>哪個字是誰的？</h3>
 <div class="tblbox">
@@ -549,7 +549,7 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 <li>右上角「<b>＋</b>」→「<b>New repository</b>」。</li>
 <li><b>Repository name</b>：英文小寫加連字號（例：<code>my-first-repo</code>）。</li>
 <li><b>Description</b>：一句話說明（建議寫）。</li>
-<li>選 <b>Public</b>／<b>Private</b>（差別見下一章）。</li>
+<li>選 <b>Public</b>／<b>Private</b>（差別見第 9 章）。</li>
 <li>勾「<b>Add a README file</b>」→ 按「<b>Create repository</b>」。</li>
 <li>完成！網址就是 <code>github.com/帳號/repo名稱</code>。</li>
 </ol>
@@ -563,7 +563,7 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </div>
 </div>
 
-<div class="note">📌 <b>裝 Git 這件事跟你的 GitHub 帳號無關</b>──第 2 章註冊的是雲端身分，不會讓你的電腦多出 Git。想走上面「🤖 AI 建」這條路，電腦要另外裝好 <b>Git</b> 和 <b>GitHub CLI</b> 這兩套本機軟體，AI 才有工具可以指揮。只留在 GitHub 網頁上操作（人工建、第 5、6、9 章的路線）都不需要裝這些。</div>
+<div class="note">📌 <b>裝 Git 這件事跟你的 GitHub 帳號無關</b>──第 2 章註冊的是雲端身分，不會讓你的電腦多出 Git。想走上面「🤖 AI 建」這條路，電腦要另外裝好 <b>Git</b> 和 <b>GitHub CLI</b> 這兩套本機軟體，AI 才有工具可以指揮。只留在 GitHub 網頁上操作（人工建、第 5、6、8 章的路線）都不需要裝這些。</div>
 <div class="duo">
 <div class="how manual">
 <span class="tag">👋 人工裝</span>
@@ -582,7 +582,31 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </div>
 
 <!-- ── 8 ── -->
-<h2 id="how-manage">8. 管理你的 Repo：公開／私有、更名、刪除</h2>
+<h2 id="how-vibe">8. 用 Gemini 建立自己的網頁＋課堂練習</h2>
+<p>Gemini 網頁版不會直接替你存檔到 GitHub；它負責<b>產生／調整 HTML</b>，你負責在 GitHub 貼上、按 <b>Commit changes</b> 存檔。這就是今天要學會的「AI 寫、自己確認、自己發布」。</p>
+<div class="tblbox">
+<table>
+<thead><tr><th>做什麼</th><th>實際要按／要貼的內容</th></tr></thead>
+<tbody>
+<tr><td><b>① 建立你的第一個 Repo</b></td><td>右上角「＋」→「New repository」→ 命名（英文小寫加連字號）→ 選 <b>Public</b> → 勾「Add a README file」→「Create repository」。（完整說明見第 7 章）</td></tr>
+<tr><td><b>② 開 Pages 讓網址活起來</b></td><td>Settings → 左側 Pages → Source 選 <b>Deploy from a branch</b> → 分支 <code>main</code>、資料夾 <code>/(root)</code> → Save。（跟第 5 章 Fork 時同一步驟）</td></tr>
+<tr><td><b>③ 建一個空白首頁</b></td><td>Repo 首頁 →「Add file」→「Create new file」→ 檔名打 <code>index.html</code> → 內容隨便打幾個字（例如 <code>Hello World</code>）→ 下方 Commit new file。這份等一下要拿去給 Gemini 改。</td></tr>
+<tr><td><b>④ 先告訴 Gemini 要改什麼</b></td><td>開 <a class="plain" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a>，貼下面的指令，再把③剛剛打的 <code>index.html</code> 內容一起貼過去。</td></tr>
+<tr><td><b>⑤ 請它調整成完整網頁</b></td><td>「我在 GitHub 新建的儲存庫裡，index.html 要做一個網頁。下面貼的是我目前的程式碼，請你幫我調整、生成完整版本。主題是『【換成你工作上常遇到的東西，例如：路燈巡檢記錄查詢、工程材料進場管理、簽稿進度追蹤】』，內容要有標題、三項服務／成果、聯絡方式。回覆請只給我一份完整、可直接貼進 index.html 的 HTML，不要解釋、不要 Markdown 符號、不要分段；文字用繁體中文，配色簡潔、手機也能閱讀。」（後面貼上③的程式碼）</td></tr>
+<tr><td><b>⑥ 到 GitHub 貼上</b></td><td>回到<b>你剛建的 Repo</b> → 點 <code>index.html</code> → 右上角鉛筆 ✏️ → 全選原內容、貼上 Gemini 回覆的 HTML。</td></tr>
+<tr><td><b>⑦ Commit＝存檔</b></td><td>頁面最下方的 <b>Commit changes</b> 不用害怕：它就是「存檔」──更精確地說，是 <b>Git 幫你記下一個回得去的版本</b>（第 3 章）。摘要可寫 <code>第一次的個人網頁</code> → 按 <b>Commit changes</b>。</td></tr>
+<tr><td><b>⑧ 看成果、再修改</b></td><td>等約 1 分鐘後開 <code>帳號.github.io/你取的repo名稱/</code>。不喜歡就再請 Gemini 修改，重複「貼上 → Commit → 重整」。</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="gold">🎯 <b>課堂練習（今天做兩組東西）：</b><br>
+<b>Fork 版（現成工具）</b>：① Fork 老師的 <code>sheet-query-demo</code> 並開出 Pages 網址（第 5 章）→ ② 用「匯入 CSV」把課堂發的假資料裝進去（第 6 章路線 B）。<br>
+<b>自建版（自己的新網頁）</b>：③ 建立你的第一個 Repo、開 Pages、建空白 <code>index.html</code>（上面①②③）→ ④ 用 Gemini 調整成介紹自己工作的網頁，貼回 GitHub <b>Commit</b>（上面④～⑦）→ 重整看成果（⑧）。<br>
+第 9 章（Repo 管理）留作課後自學。</div>
+
+<!-- ── 9 ── -->
+<h2 id="how-manage">9. 管理你的 Repo：公開／私有、更名、刪除</h2>
 
 <h3>公開 vs 私有</h3>
 <div class="tblbox">
@@ -642,27 +666,6 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </div>
 </div>
 
-<!-- ── 9 ── -->
-<h2 id="how-vibe">9. 用 Gemini 改自己的網頁＋課堂練習</h2>
-<p>Gemini 網頁版不會直接替你存檔到 GitHub；它負責<b>產生 HTML</b>，你負責在 GitHub 貼上、按 <b>Commit changes</b> 存檔。這就是今天要學會的「AI 寫、自己確認、自己發布」。</p>
-<div class="tblbox">
-<table>
-<thead><tr><th>做什麼</th><th>實際要按／要貼的內容</th></tr></thead>
-<tbody>
-<tr><td><b>① 先告訴 Gemini 要改什麼</b></td><td>開 <a class="plain" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a>，貼下面的指令；把 <code>【】</code> 裡改成自己的主題。</td></tr>
-<tr><td><b>② 請它只交出完整網頁</b></td><td>回覆請只給我一份完整、可直接貼進 <code>index.html</code> 的 HTML。不要解釋、不要 Markdown 符號、不要分段。網頁主題是「【換成你工作上常遇到的東西，例如：路燈巡檢記錄查詢、工程材料進場管理、簽稿進度追蹤】」，內容要有標題、三項服務／成果、聯絡方式；文字用繁體中文，配色簡潔、手機也能閱讀。</td></tr>
-<tr><td><b>③ 到 GitHub 貼上</b></td><td>回到<b>自己 Fork 的 Repo</b> → 點 <code>index.html</code> → 右上角鉛筆 ✏️ → 全選原內容、貼上 Gemini 回覆的 HTML。</td></tr>
-<tr><td><b>④ Commit＝存檔</b></td><td>頁面最下方的 <b>Commit changes</b> 不用害怕：它就是「存檔」──更精確地說，是 <b>Git 幫你記下一個回得去的版本</b>（第 3 章）。摘要可寫 <code>改成我的個人網頁</code> → 按 <b>Commit changes</b>。</td></tr>
-<tr><td><b>⑤ 看成果、再修改</b></td><td>等約 1 分鐘後重整你的 <code>帳號.github.io/sheet-query-demo/</code>。不喜歡就再請 Gemini 修改，重複「貼上 → Commit → 重整」。</td></tr>
-</tbody>
-</table>
-</div>
-
-<div class="gold">🎯 <b>課堂練習（今天只做這三件事）：</b>
-① Fork 老師的 <code>sheet-query-demo</code> 並開出自己的 Pages 網址（第 5 章）→
-② 用「匯入 CSV」把課堂發的假資料裝進你的網頁（第 6 章路線 B）→
-③ 用 Gemini 把首頁改成自己的主題，並在 GitHub <b>Commit</b> 後重整看成果。第 7、8 章留作課後自學。</div>
-
 <h3>延伸自學資源</h3>
 <ul style="font-size:14.5px">
 <li><a class="plain" href="https://github.com/AImaster888/sheet-query-demo" target="_blank" rel="noopener">sheet-query-demo 學員包</a>──含更完整的「設定教學」「GitHub 操作說明」「後端 proxy 進階」文件</li>
@@ -674,8 +677,8 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </section>
 
 <footer>
-AI 應用與 GitHub 實作 ─ 課程入口｜版次 v2.9（2026-08-22）<br>
-v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）→ v2.5 品牌名稱改為「工務小幫手」，工具數量改為「30 個以上，持續更新中」（08-22）→ v2.6 第 7 章補「裝 Git 與 GitHub CLI」人工／AI 兩種裝法（08-22）→ v2.7 成品直接玩加上範例試算表網址一鍵複製（08-22）→ v2.8 修正手機／瀏覽器強制深色模式下 AI 回覆文字看不清楚（08-22）→ v2.9 第 9 章 Gemini 指令主題範例改成貼近業務的具體例子（08-22）
+AI 應用與 GitHub 實作 ─ 課程入口｜版次 v3.1（2026-08-23）<br>
+v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）→ v2.5 品牌名稱改為「工務小幫手」，工具數量改為「30 個以上，持續更新中」（08-22）→ v2.6 第 7 章補「裝 Git 與 GitHub CLI」人工／AI 兩種裝法（08-22）→ v2.7 成品直接玩加上範例試算表網址一鍵複製（08-22）→ v2.8 修正手機／瀏覽器強制深色模式下 AI 回覆文字看不清楚（08-22）→ v2.9 第 9 章 Gemini 指令主題範例改成貼近業務的具體例子（08-22）→ v3.0 第 9 章改版：從改 Fork 網頁改成自建新 Repo，8 步驟含建 Repo／開 Pages／Gemini 調整程式碼（08-23）→ v3.1 對調第 8、9 章順序：Gemini 建網頁提前、管理 Repo 移到最後（08-23）
 </footer>
 
 </div>
