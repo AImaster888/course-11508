@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub 完整註冊、建庫 Commit 與 2FA 雙重驗證實戰圖文教學</title>
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-dark: #090d13;
+      --bg-card: #161b22;
+      --bg-card-hover: #1c2128;
+      --bg-terminal: #0d1117;
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --gh-green: #238636;
+      --gh-green-hover: #2ea043;
+      --gh-green-light: #3fb950;
+      --gh-blue: #58a6ff;
+      --gh-purple: #bc8cff;
+      --accent-yellow: #d29922;
+      --accent-red: #f85149;
+      --border-color: #30363d;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    .bg-glow {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1100px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(35, 134, 54, 0.18) 0%, rgba(88, 166, 255, 0.08) 45%, transparent 75%);
+      filter: blur(100px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: rgba(35, 134, 54, 0.15);
+      border: 1px solid rgba(35, 134, 54, 0.4);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gh-green-light);
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #ffffff 40%, #58a6ff 80%, #3fb950 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    /* Fast Track Alert (Google Signup) */
+    .fast-track-box {
+      background: linear-gradient(135deg, rgba(88, 166, 255, 0.12), rgba(35, 134, 54, 0.15));
+      border: 2px solid rgba(88, 166, 255, 0.4);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 36px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .fast-track-icon {
+      background: #58a6ff;
+      color: #0d1117;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    .fast-track-content h3 {
+      font-size: 1.2rem;
+      color: #fff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fast-track-content p {
+      font-size: 0.95rem;
+      color: #e6edf3;
+      line-height: 1.6;
+    }
+
+    /* Nav Section Jump Bar */
+    .nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 32px;
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-link {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: rgba(35, 134, 54, 0.2);
+      border-color: var(--gh-green-light);
+      color: #fff;
+    }
+
+    /* Section Title */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 40px 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--gh-blue);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    /* Step Card */
+    .step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      margin-bottom: 28px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      transition: border-color 0.2s ease;
+    }
+
+    .step-card:hover {
+      border-color: rgba(88, 166, 255, 0.35);
+    }
+
+    .step-header {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .step-num-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .step-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(35, 134, 54, 0.2);
+      color: var(--gh-green-light);
+      border: 1px solid rgba(35, 134, 54, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .step-title-zh {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #f0f6fc;
+    }
+
+    .step-time {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .step-body {
+      padding: 22px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .step-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Explanation & Translation */
+    .step-details {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .instruction-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.96rem;
+      line-height: 1.6;
+    }
+
+    .instruction-icon {
+      color: var(--gh-green-light);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .trans-box {
+      background: var(--bg-terminal);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 0.88rem;
+    }
+
+    .trans-box table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .trans-box td {
+      padding: 6px 4px;
+      vertical-align: top;
+    }
+
+    .en-code {
+      font-family: 'JetBrains Mono', monospace;
+      color: #79c0ff;
+      font-size: 0.84rem;
+    }
+
+    .zh-text {
+      color: #e6edf3;
+    }
+
+    .tip-yellow {
+      background: rgba(210, 153, 34, 0.1);
+      border-left: 3px solid var(--accent-yellow);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.88rem;
+      color: #e3b341;
+      line-height: 1.5;
+    }
+
+    .tip-green {
+      background: rgba(35, 134, 54, 0.1);
+      border-left: 3px solid var(--gh-green-light);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.88rem;
+      color: #3fb950;
+      line-height: 1.5;
+    }
+
+    /* Screenshot Container */
+    .screenshot-container {
+      background: #090d13;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screenshot-bar {
+      height: 28px;
+      background: #161b22;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    .url-text {
+      margin-left: 8px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .screenshot-img-wrapper {
+      padding: 0;
+      background: #0d1117;
+      text-align: center;
+    }
+
+    .screenshot-img-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.2s;
+    }
+
+    /* 2FA Dedicated Card */
+    .two-fa-card {
+      background: linear-gradient(145deg, #161b22, #0d1117);
+      border: 2px solid #58a6ff;
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-top: 40px;
+    }
+
+    .two-fa-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .two-fa-step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 18px;
+      align-items: flex-start;
+    }
+
+    .two-fa-num {
+      width: 28px;
+      height: 28px;
+      background: #58a6ff;
+      color: #0d1117;
+      border-radius: 50%;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .two-fa-desc {
+      font-size: 0.95rem;
+      color: #e6edf3;
+      line-height: 1.6;
+    }
+
+    .warning-box {
+      background: rgba(248, 81, 73, 0.1);
+      border: 1px solid var(--accent-red);
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 16px;
+      color: #ff7b72;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <div class="badge">
+        <i data-lucide="check-check" size="14"></i> 官方標準實戰教學
+      </div>
+      <h1>
+        <i data-lucide="github" size="32" style="color: #3fb950;"></i>
+        <span>GitHub 完整註冊、建庫 Commit 與 2FA 實戰手冊</span>
+      </h1>
+      <p class="subtitle">依據實機操作流程依序編排，涵蓋：Google 極速註冊、信箱手動註冊、建立首個儲存庫、線上 Commit 檔案、以及必備的 2FA 雙因素身份驗證！</p>
+    </header>
+
+    <!-- Fast Track Box: Google Signup Recommendation -->
+    <div class="fast-track-box">
+      <div class="fast-track-icon">⚡</div>
+      <div class="fast-track-content">
+        <h3>🚀 【強烈推薦】有 Google 帳號？直接點「Continue with Google」最快！</h3>
+        <p>
+          如果您平時有使用 Google 帳號（Gmail），在註冊時<strong>強烈建議直接選擇「Continue with Google」</strong>！<br>
+          👉 <strong>優點</strong>：無需手動輸入信箱、不用記額外密碼、不用經歷繁瑣驗證，一秒快速完成帳號綁定與授權，最省時省力！
+        </p>
+      </div>
+    </div>
+
+    <!-- Sticky Navigation Jump Bar -->
+    <div class="nav-bar">
+      <a href="#sec1" class="nav-link"><i data-lucide="user-plus" size="14"></i> 第一階段：帳號註冊</a>
+      <a href="#sec2" class="nav-link"><i data-lucide="folder-plus" size="14"></i> 第二階段：建立儲存庫 (Repository)</a>
+      <a href="#sec3" class="nav-link"><i data-lucide="git-commit" size="14"></i> 第三階段：線上 Commit 檔案</a>
+      <a href="#sec4" class="nav-link" style="color: #58a6ff; border-color: rgba(88, 166, 255, 0.4);"><i data-lucide="shield-check" size="14"></i> 第四階段：2FA 雙重驗證開啟教學</a>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 1: REGISTRATION -->
+    <!-- ========================================== -->
+    <div class="section-header" id="sec1">
+      <i data-lucide="user-plus" size="22" style="color: #3fb950;"></i>
+      <h2>第一階段：GitHub 帳號註冊流程</h2>
+      <span class="section-tag">註冊帳號</span>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-title">
+          <div class="step-badge">1</div>
+          <div class="step-title-zh">打開 GitHub 官網並點擊 Sign in (登入)</div>
+        </div>
+        <div class="step-time"><i data-lucide="clock" size="12"></i> 約 30 秒</div>
+      </div>
+      <div class="step-body">
+        <div class="step-details">
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div>打開瀏覽器進入 <strong>github.com</strong>，點擊右上角紅圈標示的「<strong>Sign in</strong>」按鈕。</div>
+          </div>
+          <div class="trans-box">
+            <table>
+              <tr><td class="en-code" style="width: 40%;">github.com</td><td class="zh-text">GitHub 官方網站首頁</td></tr>
+              <tr><td class="en-code">Sign in</td><td class="zh-text">登入（右上角按鈕）</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="screenshot-container">
+          <div class="screenshot-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="url-text">https://github.com</span>
+          </div>
+          <div class="screenshot-img-wrapper">
+            <img src="./github註冊截圖/1-1.jpg" alt="官網首頁點擊 Sign in" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-title">
+          <div class="step-badge">2</div>
+          <div class="step-title-zh">選擇 Google 極速登入 或 點擊 Create an account 建立帳號</div>
+        </div>
+        <div class="step-time"><i data-lucide="clock" size="12"></i> 約 20 秒</div>
+      </div>
+      <div class="step-body">
+        <div class="step-details">
+          <div class="instruction-item">
+            <i data-lucide="zap" class="instruction-icon" size="18" style="color: #58a6ff;"></i>
+            <div><strong>極速方式</strong>：點擊「<strong>Continue with Google</strong>」，直接用現有 Google 帳號授權最省事。</div>
+          </div>
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>手動註冊</strong>：點擊最下方紅圈處「<strong>New to GitHub? Create an account</strong>」進入手動表單。</div>
+          </div>
+          <div class="trans-box">
+            <table>
+              <tr><td class="en-code" style="width: 45%;">Continue with Google</td><td class="zh-text">使用 Google 帳號繼續（推薦最快）</td></tr>
+              <tr><td class="en-code">New to GitHub?</td><td class="zh-text">第一次使用 GitHub？</td></tr>
+              <tr><td class="en-code">Create an account</td><td class="zh-text">建立新帳號</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="screenshot-container">
+          <div class="screenshot-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="url-text">https://github.com/login</span>
+          </div>
+          <div class="screenshot-img-wrapper">
+            <img src="./github註冊截圖/2.jpg" alt="點擊 Create an account" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 & 4 & 5 & 6 & 7 (Form Filling & Duplicate Username) -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-title">
+          <div class="step-badge">3</div>
+          <div class="step-title-zh">填寫基本資料 ＆ 解決帳號名稱重複問題 (Username Available)</div>
+        </div>
+        <div class="step-time"><i data-lucide="clock" size="12"></i> 約 1 分鐘</div>
+      </div>
+      <div class="step-body">
+        <div class="step-details">
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>Email</strong>：輸入電子信箱 ➔ 右側出現綠勾。</div>
+          </div>
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>Password</strong>：輸入 8 碼以上（含英數）密碼 ➔ 出現綠勾。</div>
+          </div>
+          <div class="tip-yellow">
+            <strong>⚠️ 重複名稱避坑技巧：</strong><br>
+            若 Username 輸入常見名稱（如 <code>your.name</code>）出現紅字 <em>"Username is not available"</em>，代表該名稱已被註冊！<br>
+            👉 <strong>解法（示範範例）</strong>：可在名稱後面加上自訂後綴或數字（例如 <code>yourname-2026</code> 或 <code>yourname-dev</code>），右側就會出現<strong>綠色勾勾 (✔ Available)</strong>！
+          </div>
+          <div class="instruction-item" style="margin-top: 4px;">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>Country/Region</strong>：選擇 Taiwan。</div>
+          </div>
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div>確認全部勾選後，點擊下方綠色大按鈕「<strong>Create account ></strong>」。</div>
+          </div>
+        </div>
+        <div class="screenshot-container">
+          <div class="screenshot-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="url-text">https://github.com/signup</span>
+          </div>
+          <div class="screenshot-img-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px;">
+            <img src="./github註冊截圖/4-1.jpg" alt="名稱重複提示" style="border-radius: 4px;" />
+            <img src="./github註冊截圖/7-1.jpg" alt="填寫完成綠勾確認" style="border-radius: 4px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 8 & 9 (Confirm Email & Launch Code) -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-title">
+          <div class="step-badge">4</div>
+          <div class="step-title-zh">收信獲取驗證碼並填入 8 位數代碼</div>
+        </div>
+        <div class="step-time"><i data-lucide="clock" size="12"></i> 約 1 分鐘</div>
+      </div>
+      <div class="step-body">
+        <div class="step-details">
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>網頁畫面</strong>：提示 <em>Confirm your email address - We have sent a code to your email</em>，並呈現 8 個輸入框。</div>
+          </div>
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>信箱收信</strong>：打開信箱收到主旨為「<strong>🚀 Your GitHub launch code</strong>」的郵件，複製紅圈中的 8 位數驗證碼（如 <code>12345678</code>）並填回網頁。</div>
+          </div>
+          <div class="trans-box">
+            <table>
+              <tr><td class="en-code" style="width: 45%;">Confirm your email</td><td class="zh-text">確認您的電子郵件地址</td></tr>
+              <tr><td class="en-code">Your GitHub launch code</td><td class="zh-text">您的 GitHub 啟用發射代碼（信件標題）</td></tr>
+              <tr><td class="en-code">Resend the code</td><td class="zh-text">沒收到信？點此重新發送</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="screenshot-container">
+          <div class="screenshot-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="url-text">https://github.com/signup/verify</span>
+          </div>
+          <div class="screenshot-img-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px;">
+            <img src="./github註冊截圖/8.jpg" alt="輸入驗證碼" style="border-radius: 4px;" />
+            <img src="./github註冊截圖/9.jpg" alt="驗證信件內容" style="border-radius: 4px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: CREATE REPOSITORY -->
+    <!-- ========================================== -->
+    <div class="section-header" id="sec2">
+      <i data-lucide="folder-plus" size="22" style="color: #58a6ff;"></i>
+      <h2>第二階段：建立第一個儲存庫 (Repository)</h2>
+      <span class="section-tag">建立專案</span>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-title">
+          <div class="step-badge">5</div>
+          <div class="step-title-zh">在 Dashboard 首頁點擊 Create repository 建立專案</div>
+        </div>
+        <div class="step-time"><i data-lucide="clock" size="12"></i> 約 30 秒</div>
+      </div>
+      <div class="step-body">
+        <div class="step-details">
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div>登入進入 GitHub Dashboard（儀表板首頁），左側會看到「<strong>Create your first project</strong>」。</div>
+          </div>
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div>點擊綠色的「<strong>Create repository</strong>」按鈕開始建立新儲存庫。</div>
+          </div>
+          <div class="trans-box">
+            <table>
+              <tr><td class="en-code" style="width: 45%;">Dashboard</td><td class="zh-text">儀表板 / 首頁</td></tr>
+              <tr><td class="en-code">Create repository</td><td class="zh-text">建立儲存庫（專案程式碼空間）</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="screenshot-container">
+          <div class="screenshot-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="url-text">https://github.com/dashboard</span>
+          </div>
+          <div class="screenshot-img-wrapper">
+            <img src="./github註冊截圖/10.jpg" alt="首頁畫面" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-title">
+          <div class="step-badge">6</div>
+          <div class="step-title-zh">命名儲存庫 helloworld ＆ 設定 Public 公開權限</div>
+        </div>
+        <div class="step-time"><i data-lucide="clock" size="12"></i> 約 30 秒</div>
+      </div>
+      <div class="step-body">
+        <div class="step-details">
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>Repository name</strong>：輸入 <code>helloworld</code> ➔ 下方顯示 <em>✔ helloworld is available.</em>。</div>
+          </div>
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>Choose visibility</strong>：選擇「<strong>Public</strong>（公開，全世界皆可查看）」或「Private（私人）」。</div>
+          </div>
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div>點擊右下角綠色「<strong>Create repository</strong>」按鈕確認建立！</div>
+          </div>
+        </div>
+        <div class="screenshot-container">
+          <div class="screenshot-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="url-text">https://github.com/new</span>
+          </div>
+          <div class="screenshot-img-wrapper">
+            <img src="./github註冊截圖/14-1.jpg" alt="儲存庫設定畫面" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3: ONLINE COMMIT -->
+    <!-- ========================================== -->
+    <div class="section-header" id="sec3">
+      <i data-lucide="git-commit" size="22" style="color: #bc8cff;"></i>
+      <h2>第三階段：線上建立檔案並完成第一次 Commit</h2>
+      <span class="section-tag">首次提交</span>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-title">
+          <div class="step-badge">7</div>
+          <div class="step-title-zh">在專案頁點擊 creating a new file 線上新增檔案</div>
+        </div>
+        <div class="step-time"><i data-lucide="clock" size="12"></i> 約 20 秒</div>
+      </div>
+      <div class="step-body">
+        <div class="step-details">
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div>儲存庫建立完成後，在 Quick setup 說明區塊中，點擊紅圈處的藍色連結「<strong>creating a new file</strong>」。</div>
+          </div>
+          <div class="trans-box">
+            <table>
+              <tr><td class="en-code" style="width: 45%;">Quick setup</td><td class="zh-text">快速設定指引</td></tr>
+              <tr><td class="en-code">creating a new file</td><td class="zh-text">建立新檔案（直接在瀏覽器線上編輯）</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="screenshot-container">
+          <div class="screenshot-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="url-text">https://github.com/your-username/helloworld</span>
+          </div>
+          <div class="screenshot-img-wrapper">
+            <img src="./github註冊截圖/16-1.jpg" alt="點擊 creating a new file" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-title">
+          <div class="step-badge">8</div>
+          <div class="step-title-zh">輸入檔名 index.html 內容 hello world 並 Commit changes</div>
+        </div>
+        <div class="step-time"><i data-lucide="clock" size="12"></i> 約 40 秒</div>
+      </div>
+      <div class="step-body">
+        <div class="step-details">
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>線上編輯</strong>：檔名欄位輸入 <code>index.html</code>，下方編輯區輸入 <code>hello world</code> ➔ 點右上角「<strong>Commit changes...</strong>」。</div>
+          </div>
+          <div class="instruction-item">
+            <i data-lucide="check-circle-2" class="instruction-icon" size="18"></i>
+            <div><strong>提交紀錄</strong>：彈出視窗內確認 Commit message（例如 <code>Add hello world message to index.html</code>）➔ 點綠色「<strong>Commit changes</strong>」。</div>
+          </div>
+          <div class="tip-green">
+            <strong>🎉 發布成功：</strong> 專案首頁已成功顯示 <code>index.html</code> 與 <code>1 Commit</code> 提交紀錄！您已正式完成 GitHub 第一次發布！
+          </div>
+        </div>
+        <div class="screenshot-container">
+          <div class="screenshot-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="url-text">https://github.com/your-username/helloworld/new/main</span>
+          </div>
+          <div class="screenshot-img-wrapper" style="display: flex; flex-direction: column; gap: 4px; padding: 4px;">
+            <img src="./github註冊截圖/18-1.jpg" alt="編輯檔案" style="border-radius: 4px;" />
+            <img src="./github註冊截圖/19.jpg" alt="提交 Commit" style="border-radius: 4px;" />
+            <img src="./github註冊截圖/20-1.jpg" alt="完成成果" style="border-radius: 4px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4: 2FA SETUP GUIDE -->
+    <!-- ========================================== -->
+    <div class="two-fa-card" id="sec4">
+      <div class="two-fa-title">
+        <i data-lucide="shield-alert" size="26" style="color: #58a6ff;"></i>
+        <span>第四階段：啟用 2FA 雙因素身份驗證 (Two-Factor Authentication)</span>
+      </div>
+      <p style="font-size: 0.95rem; color: #8b949e; margin-bottom: 22px;">
+        💡 <strong>為什麼必須開？</strong> GitHub 官方為了資安防護，已強制要求所有活躍用戶開啟 2FA（雙重驗證）。未開啟未來可能會被限制推送程式碼！
+      </p>
+
+      <div class="two-fa-step">
+        <div class="two-fa-num">1</div>
+        <div class="two-fa-desc">
+          <strong>進入設定 (Settings)</strong>：<br>
+          在 GitHub 任何頁面點擊<strong>右上角個人圓形頭像</strong> ➔ 點選下拉選單中的「<strong>Settings（設定）</strong>」。
+        </div>
+      </div>
+
+      <div class="two-fa-step">
+        <div class="two-fa-num">2</div>
+        <div class="two-fa-desc">
+          <strong>密碼與身份驗證</strong>：<br>
+          在左側側邊欄點選「<strong>Password and authentication（密碼和身份驗證）</strong>」。
+        </div>
+      </div>
+
+      <div class="two-fa-step">
+        <div class="two-fa-num">3</div>
+        <div class="two-fa-desc">
+          <strong>啟用雙因素認證</strong>：<br>
+          找到 <strong>Two-factor authentication</strong> 區塊，點擊綠色按鈕「<strong>Enable two-factor authentication（啟用雙因素身份驗證）</strong>」。
+        </div>
+      </div>
+
+      <div class="two-fa-step">
+        <div class="two-fa-num">4</div>
+        <div class="two-fa-desc">
+          <strong>手機 App 掃描 QR 碼</strong>：<br>
+          使用手機打開驗證器 App（推薦免費的 <strong>Google Authenticator</strong> 或 <strong>Microsoft Authenticator</strong>），點選掃描 QR 碼功能對準螢幕上的 QR Code。
+        </div>
+      </div>
+
+      <div class="two-fa-step">
+        <div class="two-fa-num">5</div>
+        <div class="two-fa-desc">
+          <strong>輸入 6 位數驗證碼</strong>：<br>
+          把手機 App 上產生的 <strong>6 位數動態代碼</strong> 輸入至 GitHub 網頁下方以完成綁定確認。
+        </div>
+      </div>
+
+      <div class="warning-box">
+        <strong>🚨 【最重要一步】下載並妥善保存「Recovery Codes (復原代碼)」：</strong><br>
+        綁定完成後，系統會提供一組 <strong>16 個復原備用代碼 (Recovery Codes)</strong>。<br>
+        請務必點擊「<strong>Download</strong>」下載文字檔，或複製存放在安全的地方（如密碼管理器/雲端筆記）！<br>
+        👉 <em>如果未來手機遺失、換新手機或驗證器被刪除，這組復原代碼是您唯一能登入救回 GitHub 帳號的鑰匙！</em>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 GitHub 完整實戰教學手冊 • 專為中文開發者與學員打造</p>
+    </footer>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
