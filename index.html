@@ -36,7 +36,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <title>AI 應用與 GitHub 實作 ─ 課程入口</title>
-<script src="papaparse.min.js"></script>
 <style>
 :root{--ink:#22271f;--paper:#f5f7f3;--line:#e4e4db;--accent:#2f5233;--soft:#e7efe7;
 --ok-bg:#dff4df;--ok-tx:#186a2e;--warn-bg:#fdeaea;--warn-tx:#9c2b2b;--late-bg:#faeeda;--late-tx:#854f0b;
@@ -95,7 +94,7 @@ a.plain{color:var(--accent)}
 .cta.alt{background:var(--ai)}
 .mapnum{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:var(--accent);color:#fff;font-size:14px;margin-right:6px}
 
-/* ── 表格（教學與 Demo 共用） ── */
+/* ── 表格（教學章節用） ── */
 .tblbox{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:8px;margin:12px 0}
 table{width:100%;border-collapse:collapse;background:#fff;font-size:14px;min-width:560px}
 th,td{padding:9px 10px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}
@@ -106,50 +105,6 @@ tbody tr:hover{background:#f4f6f2}
 .b-rej,.b-warn{background:var(--warn-bg);color:var(--warn-tx)}
 .b-late{background:var(--late-bg);color:var(--late-tx)}
 .b-none{background:#ececec;color:#666}
-
-/* ── Demo 工具區（原 v1.0 樣式） ── */
-.source{background:#fff;border:1px dashed var(--accent);border-radius:10px;padding:12px 16px;margin-bottom:14px}
-.source b{color:var(--accent)}
-.source .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
-.source input[type=text]{padding:9px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px;font-family:ui-monospace,monospace}
-.source input.sid{flex:2;min-width:220px}
-.source input.gid{width:110px}
-.source button,.source label.up{padding:9px 16px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;display:inline-block}
-.source .demo-btn{background:#fff;color:var(--accent);border:1px solid var(--accent)}
-.source label.up{background:#4a6b8a}
-.source input[type=file]{display:none}
-.source label.merge{font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:5px;cursor:pointer;padding:6px 4px}
-.source label.merge input{accent-color:var(--accent)}
-.src-tag{display:inline-block;margin-left:8px;padding:2px 10px;border-radius:14px;font-size:12.5px;background:var(--soft);color:var(--accent)}
-.parsed{font-size:13px;margin-top:8px;word-break:break-all}
-.parsed code{background:#eef1ec;padding:2px 6px;border-radius:4px;font-size:12px}
-.parsed .p-ok{color:var(--ok-tx);font-weight:700}
-.parsed .p-bad{color:var(--warn-tx)}
-.privacy{font-size:12.5px;color:#6c716a;margin-top:6px}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.controls input,.controls select,.controls button{padding:10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
-.controls input{flex:1;min-width:200px}
-.controls button{background:var(--accent);color:#fff;border:none;cursor:pointer}
-#count{font-size:14px;color:#6c716a;margin-bottom:8px}
-#status{font-size:14px;color:#6c716a}
-dialog{border:none;border-radius:10px;padding:20px;max-width:460px;box-shadow:0 10px 40px rgba(0,0,0,.18)}
-dialog b{color:var(--accent)}
-dialog button{margin-top:10px;padding:8px 16px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer}
-.setup{background:#fff8e1;border:1px solid #f0d98c;border-radius:8px;padding:14px 18px;margin-bottom:14px;line-height:1.7;display:none}
-.ai{background:#fff;border:1px solid #c9d8e6;border-left:4px solid #4a6b8a;border-radius:10px;padding:12px 16px;margin:0 0 14px}
-.ai b{color:#2c4a66}
-.ai .ai-sub{font-size:12.5px;color:#6c716a}
-.ai .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.ai select,.ai input{padding:9px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
-.ai input#aiKey{flex:1;min-width:220px;font-family:ui-monospace,monospace}
-.ai input#aiQ{flex:1;min-width:220px}
-.ai button{padding:9px 16px;border:none;border-radius:6px;background:#4a6b8a;color:#fff;cursor:pointer;font-size:14px}
-.ai button:disabled{opacity:.55;cursor:wait}
-.ai-warn{font-size:12.5px;color:#854f0b;background:var(--late-bg);border-radius:6px;padding:8px 12px;margin-top:8px;line-height:1.7}
-.ai .chips{gap:6px}
-.ai .chip{background:#fff;color:#2c4a66;border:1px solid #c9d8e6;border-radius:18px;padding:6px 13px;font-size:13px}
-.ai .chip:hover{background:#eef4f9}
-.ai-out{background:#f7f9fb;color:var(--ink);border:1px solid #dde6ee;border-radius:6px;padding:12px 14px;margin-top:10px;white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:14px;line-height:1.8;max-height:420px;overflow-y:auto}
 
 footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-size:12.5px;color:#6c716a}
 
@@ -258,77 +213,13 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 想看我日常真的在用的 30 個以上工具（持續更新中） → <a class="plain" href="https://aimaster888.github.io/toolbox/" target="_blank" rel="noopener">工務小幫手</a>。
 </div>
 
-<div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:8px;margin-bottom:12px">
-<div>
-<h2 style="margin:0;border:none;padding:0">資料查詢閱讀器 <span class="src-tag" id="srcTag">Demo 資料</span></h2>
-<div class="sub" style="color:#6c716a;font-size:14px">Google Sheets／本機 CSV 都能讀 ─ 換個資料源就是你的工具</div>
-</div>
-<div id="status">讀取中...</div>
-</div>
-
-<div id="setup" class="setup">
-<b>👋 還沒有資料</b>：下面兩條路二選一——貼上你的 Google 試算表網址，按<b>「載入我的試算表」</b>；或直接按 <b>「📂 匯入 CSV」</b> 選一個檔案。<br>
-沒有自己的試算表？<button type="button" class="demo-btn" style="padding:4px 10px;font-size:13px" onclick="copyDemoUrl(this)">📋 複製範例試算表網址</button> 貼到上面欄位、按「載入我的試算表」，就能看到範例資料長什麼樣子。
-</div>
-
-<!-- 三種資料來源 -->
-<div class="source">
-<b>🔄 資料來源</b>（三選一，隨時可切換）
-<div class="row">
-<input type="text" class="sid" id="inSid" placeholder="貼上整個試算表網址（或直接貼 SHEET_ID）" oninput="previewParse()" autocomplete="off">
-<input type="text" class="gid" id="inGid" placeholder="GID，預設 0" oninput="previewParse()" autocomplete="off">
-<button onclick="useCustom()">載入我的試算表</button>
-<label class="up">📂 匯入 CSV<input type="file" id="inFile" accept=".csv" onchange="useFile(this.files[0]);this.value='';"></label>
-<label class="merge"><input type="checkbox" id="mergeChk"> 合併到現有資料</label>
-<button class="demo-btn" onclick="clearData()">🗑 清除資料</button>
-</div>
-<div class="parsed" id="parsed"></div>
-<div class="privacy">🔒 「匯入 CSV」的檔案只在你的瀏覽器裡解析，<b>不會上傳到任何地方</b>；支援 UTF-8 與 Big5（舊 Excel）編碼，會自動偵測。試算表模式則需該表設為「知道連結的任何人可檢視」。</div>
-</div>
-
-<!-- 傳統搜尋 -->
-<div class="controls">
-<input id="keyword" placeholder="關鍵字搜尋（所有欄位）…" autocomplete="off">
-<select id="filterResult" style="display:none"><option value="">全部審查結果</option></select>
-<select id="filterLate" style="display:none">
-<option value="">全部提送狀況</option>
-<option value="LATE">有逾期</option>
-<option value="ONTIME">無逾期</option>
-</select>
-<button onclick="reload()">重新整理</button>
-</div>
-
-<div id="count"></div>
-
-<!-- AI 分析（BYOK：自備金鑰） -->
-<div class="ai">
-<b>🤖 AI 分析</b><span class="ai-sub">（自備金鑰 BYOK ─ 金鑰只在你的瀏覽器記憶體，不儲存、關頁即忘）</span>
-<div class="row">
-<select id="aiProvider">
-<option value="gemini">Google Gemini（gemini-2.5-flash）</option>
-<option value="openai">OpenAI ChatGPT（gpt-5.4-mini）</option>
-</select>
-<input type="password" id="aiKey" placeholder="貼上你的 API Key（不會儲存）" autocomplete="new-password">
-</div>
-<div class="row">
-<input type="text" id="aiQ" placeholder="想問什麼？留空＝總結目前篩選出的資料" autocomplete="off">
-<button onclick="askAI()" id="aiBtn">送出分析</button>
-</div>
-<div class="row chips">
-<button class="chip" onclick="quickAsk('summary')">📋 總結重點</button>
-<button class="chip" onclick="quickAsk('late')">⏰ 逾期分析</button>
-<button class="chip" onclick="quickAsk('reject')">↩️ 審退整理</button>
-<button class="chip" onclick="quickAsk('draft')">✍️ 寫成報告文字</button>
-</div>
-<div class="ai-warn">⚠️ 按下送出後，<b>「目前篩選出的資料」會傳送到所選 AI 官方服務</b>。請先確認資料非機密（公務機密資料不得輸入外部 AI 服務）。建議使用低額度、可隨時撤銷的金鑰；用完可到該服務後台撤銷。可按 F12 → Network 親自確認金鑰只送往官方 API。</div>
-<pre id="aiOut" class="ai-out" style="display:none"></pre>
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+<h2 style="margin:0;border:none;padding:0">資料查詢閱讀器 Demo</h2>
+<a class="plain" href="https://aimaster888.github.io/sheet-query-demo/" target="_blank" rel="noopener">↗ 在新分頁開啟</a>
 </div>
 
 <div class="tblbox">
-<table>
-<thead id="thead"></thead>
-<tbody id="tbody"></tbody>
-</table>
+<iframe src="https://aimaster888.github.io/sheet-query-demo/" title="資料查詢閱讀器 Demo" style="width:100%;height:900px;border:none;display:block" loading="lazy"></iframe>
 </div>
 </section>
 
@@ -704,17 +595,11 @@ footer{margin-top:50px;border-top:1px solid var(--line);padding-top:12px;font-si
 </section>
 
 <footer>
-AI 應用與 GitHub 實作 ─ 課程入口｜版次 v4.0（2026-08-23）<br>
-v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）→ v2.5 品牌名稱改為「工務小幫手」，工具數量改為「30 個以上，持續更新中」（08-22）→ v2.6 第 7 章補「裝 Git 與 GitHub CLI」人工／AI 兩種裝法（08-22）→ v2.7 成品直接玩加上範例試算表網址一鍵複製（08-22）→ v2.8 修正手機／瀏覽器強制深色模式下 AI 回覆文字看不清楚（08-22）→ v2.9 第 9 章 Gemini 指令主題範例改成貼近業務的具體例子（08-22）→ v3.0 第 9 章改版：從改 Fork 網頁改成自建新 Repo，8 步驟含建 Repo／開 Pages／Gemini 調整程式碼（08-23）→ v3.1 對調第 8、9 章順序：Gemini 建網頁提前、管理 Repo 移到最後（08-23）→ v3.2 延伸自學資源新增 MIT Sloan 數位轉型報告連結（08-23）→ v3.3 延伸自學資源：MIT Sloan 連結換成 AI 導入推動指南 Google Docs＋OpenAI 官方影片案例（08-23）→ v3.4 第 9 章結尾新增「看懂兩個網址：以後要跟長官報告時怎麼寫」（08-23）→ v3.5 該小節 .com／.io 套色區分（08-23）→ v3.6 修正套色對比不足：換成專用高對比藍／橙色＋加粗（08-23）→ v3.7 第 2 章新增連結：GitHub 傳統帳密註冊圖文手冊（備用方法）（08-23） → v3.8 註冊手冊截圖壓縮（14MB→1.7MB）並改為延遲載入，行動數據開頁不卡（08-23） → v3.9 移除失效的 config.js 載入（檔案不存在，每次開頁多一次 404；程式本有 window.CONFIG 保底，功能不變）（08-23） → v4.0 註冊手冊 2FA 段落新增「開始前先裝驗證器 App」事前準備提醒（08-23）
+AI 應用與 GitHub 實作 ─ 課程入口｜版次 v4.1（2026-08-24）<br>
+v1.0 資料查詢閱讀器 Demo（07-13）→ v2.0 合併三籤課程入口（07-18）→ v2.1 雙 AI 審查修正（07-18）→ v2.2 新增「Git 與 GitHub：誰做什麼」章節（07-29）→ v2.3 修正 GID 殘留值導致讀取失敗（07-29）→ v2.4 認證章節改版：改推 Google for Education 兩張（07-30）→ v2.5 品牌名稱改為「工務小幫手」，工具數量改為「30 個以上，持續更新中」（08-22）→ v2.6 第 7 章補「裝 Git 與 GitHub CLI」人工／AI 兩種裝法（08-22）→ v2.7 成品直接玩加上範例試算表網址一鍵複製（08-22）→ v2.8 修正手機／瀏覽器強制深色模式下 AI 回覆文字看不清楚（08-22）→ v2.9 第 9 章 Gemini 指令主題範例改成貼近業務的具體例子（08-22）→ v3.0 第 9 章改版：從改 Fork 網頁改成自建新 Repo，8 步驟含建 Repo／開 Pages／Gemini 調整程式碼（08-23）→ v3.1 對調第 8、9 章順序：Gemini 建網頁提前、管理 Repo 移到最後（08-23）→ v3.2 延伸自學資源新增 MIT Sloan 數位轉型報告連結（08-23）→ v3.3 延伸自學資源：MIT Sloan 連結換成 AI 導入推動指南 Google Docs＋OpenAI 官方影片案例（08-23）→ v3.4 第 9 章結尾新增「看懂兩個網址：以後要跟長官報告時怎麼寫」（08-23）→ v3.5 該小節 .com／.io 套色區分（08-23）→ v3.6 修正套色對比不足：換成專用高對比藍／橙色＋加粗（08-23）→ v3.7 第 2 章新增連結：GitHub 傳統帳密註冊圖文手冊（備用方法）（08-23） → v3.8 註冊手冊截圖壓縮（14MB→1.7MB）並改為延遲載入，行動數據開頁不卡（08-23） → v3.9 移除失效的 config.js 載入（檔案不存在，每次開頁多一次 404；程式本有 window.CONFIG 保底，功能不變）（08-23） → v4.0 註冊手冊 2FA 段落新增「開始前先裝驗證器 App」事前準備提醒（08-23） → v4.1 籤二「成品直接玩」不再貼一份完整程式碼，改為 iframe 內嵌 sheet-query-demo 正式網址：該工具唯一正本改為 sheet-query-demo repo（已補 GID 驗證／stale GID／Big5 嚴格偵測／CSV 錯誤警示等修正＋複製範例試算表網址按鈕），避免兩份程式碼各自維護、日後分岔（08-24）
 </footer>
 
 </div>
-
-<dialog id="dlg">
-<h3 id="dname"></h3>
-<div id="detail"></div>
-<button onclick="dlg.close()">關閉</button>
-</dialog>
 
 <script>
 /* ── 籤切換（hash 路由）：#tab-* 直接切籤；其他錨點自動切到所屬籤再捲動 ── */
@@ -739,296 +624,7 @@ function route(){
  showTab("tab-map");
 }
 window.addEventListener("hashchange",route);
-
-/* ══════════ 以下為資料查詢閱讀器（v1.0 原程式，未更動） ══════════ */
-/* 資料源狀態 */
-const statusEl=document.getElementById("status"); /* 不用裸 status：會撞 window.status 導致訊息不顯示 */
-const cfg=window.CONFIG||{};
-let SHEET_ID=cfg.SHEET_ID||"";
-let GID=cfg.GID||"0";
-let mode="sheet";          // "sheet" | "file"
-let allRows=[], columns=[], currentRows=[];
-
-/* 「成品直接玩」範例試算表：讓沒有自己資料的訪客也能一鍵複製網址試玩 */
-const DEMO_SHEET_URL="https://docs.google.com/spreadsheets/d/1XbOK3q4CF4wYIPloQEU4bPOGEUkWtAw5gwNz4HwP55g/edit?gid=2048591611#gid=2048591611";
-function copyDemoUrl(btn){
- const old=btn.textContent;
- navigator.clipboard.writeText(DEMO_SHEET_URL).then(()=>{
-  btn.textContent="✓ 已複製，貼到上面欄位吧";
-  setTimeout(()=>{btn.textContent=old;},2000);
- }).catch(()=>{
-  prompt("複製失敗，請手動複製這段網址：",DEMO_SHEET_URL);
- });
-}
-
-/* 防 XSS：所有要放進表格的內容一律先跳脫 */
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
-
-function csvUrl(){
- return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/export?format=csv&gid=${encodeURIComponent(GID)}&t=${Date.now()}`;
-}
-
-/* --- 三種來源 --- */
-/* --- 自動從網址挑出 SHEET_ID / GID（學員貼整條網址就好） --- */
-function parseSheetInput(){
- const raw=document.getElementById("inSid").value.trim();
- const gidBox=document.getElementById("inGid").value.trim();
- if(!raw) return null;
- if(gidBox && !/^\d+$/.test(gidBox)) return {error:true, raw};  // GID 只准數字
- let sid=raw, gid=gidBox||"0";
- // 是網址 → 抓 /d/ 後面那段
- const m=raw.match(/\/d\/([a-zA-Z0-9_-]{20,})/);
- if(m){ sid=m[1]; }
- // 網址帶 gid → 一律以網址為準（欄位裡可能殘留上一次載入回填的舊 GID，
- // 手填優先會讓舊值蓋掉新網址的分頁，換試算表時只顯示「讀取失敗」看不出原因）
- const g=raw.match(/[?#&]gid=(\d+)/);
- if(g){ gid=g[1]; }
- // 貼的不是網址、就當它是純 ID（簡單長度檢查）
- if(!m && !/^[a-zA-Z0-9_-]{20,}$/.test(sid)) return {error:true, raw};
- return {sid, gid};
-}
-
-function previewParse(){
- const box=document.getElementById("parsed");
- const raw=document.getElementById("inSid").value.trim();
- if(!raw){ box.innerHTML=""; return; }
- const p=parseSheetInput();
- if(!p || p.error){
-  box.innerHTML=`<span class="p-bad">✗ 看不懂這段——請貼整條試算表網址（docs.google.com/spreadsheets/d/…），或 /d/ 後面那串 ID</span>`;
-  return;
- }
- box.innerHTML=`<span class="p-ok">✓ 已識別</span>　SHEET_ID：<code>${esc(p.sid)}</code>　GID：<code>${esc(p.gid)}</code>`;
-}
-
-function useCustom(){
- const p=parseSheetInput();
- if(!p){alert("請先貼上試算表網址或 SHEET_ID");return;}
- if(p.error){alert("看不懂你貼的內容。\n請貼整條試算表網址（docs.google.com/spreadsheets/d/…）。");return;}
- SHEET_ID=p.sid;GID=p.gid;
- document.getElementById("inGid").value=p.gid;
- mode="sheet";srcTag.textContent="我的試算表";
- loadSheet();
-}
-/* 清空已載入的資料，回到未載入狀態（合併勾選也一併取消，避免下次又疊上去） */
-function clearData(){
- allRows=[];columns=[];currentRows=[];srcCount=0;
- document.getElementById("mergeChk").checked=false;
- thead.innerHTML="";tbody.innerHTML="";count.textContent="";
- setupSmartFilters();
- setup.style.display="block";
- srcTag.textContent="尚未載入";
- statusEl.textContent="已清除，可重新載入";
-}
-function useFile(f){
- if(!f) return;
- const append=document.getElementById("mergeChk").checked;
- mode="file";
- srcTag.textContent=append&&allRows.length ? "已合併："+f.name : "本機檔案："+f.name;
- statusEl.textContent="解析中...";
- /* 編碼偵測：先嚴格 UTF-8，失敗自動改 Big5（舊版 Excel 常見），再失敗給友善提示 */
- const reader=new FileReader();
- reader.onload=function(e){
-  const buf=e.target.result;
-  let text=null, enc="UTF-8";
-  try{ text=new TextDecoder("utf-8",{fatal:true}).decode(buf); }
-  catch(_){
-   try{ text=new TextDecoder("big5",{fatal:true}).decode(buf); enc="Big5"; }
-   catch(_2){ text=null; }
-  }
-  if(text===null){
-   statusEl.textContent="編碼無法辨識";
-   alert("這個檔案的編碼無法辨識。\n請用 Excel 或 Google Sheets 重新另存為「CSV UTF-8」再匯入。");
-   return;
-  }
-  Papa.parse(text,{header:true,skipEmptyLines:true,complete:function(res){
-   onParsed(res, append);
-   if(enc==="Big5") statusEl.textContent+="（原檔為 Big5，已自動轉換）";
-  }});
- };
- reader.onerror=function(){ statusEl.textContent="讀檔失敗"; };
- reader.readAsArrayBuffer(f);
-}
-function reload(){ mode==="sheet" ? loadSheet() : applyFilters(); }
-
-/* --- 解析完成後共同處理（動態欄位＋合併排序的核心） --- */
-let srcCount=0;   // 已載入的資料來源數
-function onParsed(res, append){
- const parseWarn=(res.errors&&res.errors.length)?`；⚠️ CSV 有 ${res.errors.length} 處解析問題，資料可能不完整`:"";
- const newCols=(res.meta.fields||[]).filter(c=>c && c.trim()!=="");
- const newRows=res.data.filter(x=>Object.values(x).join("").trim()!=="");
- if(append && allRows.length){
-  // 欄位取聯集（順序以現有為主，新欄位補在後面）
-  newCols.forEach(c=>{ if(!columns.includes(c)) columns.push(c); });
-  allRows=allRows.concat(newRows);
-  srcCount++;
- }else{
-  columns=newCols; allRows=newRows; srcCount=1;
- }
- // 有「期數」欄 → 依期數排序;同期數再依「提送次數」排(多次提送排在一起,順序正確)
- if(columns.includes("期數")){
-  allRows.sort((a,b)=>{
-   const d=(parseFloat(a["期數"])||0)-(parseFloat(b["期數"])||0);
-   if(d!==0) return d;
-   return (parseFloat(a["提送次數"])||0)-(parseFloat(b["提送次數"])||0);
-  });
- }
- allRows.forEach(r=>{ r._search=columns.map(c=>r[c]||"").join(" ").toLowerCase(); });
- setup.style.display="none";buildHead();
- setupSmartFilters();
- applyFilters();
- statusEl.textContent=`已載入 ${allRows.length} 筆`+(srcCount>1?`（合併 ${srcCount} 個來源）`:"")+` (${new Date().toLocaleTimeString()})`+parseWarn;
-}
-
-function buildHead(){
- thead.innerHTML="<tr>"+columns.map(c=>`<th>${esc(c)}</th>`).join("")+"</tr>";
-}
-
-/* 有「審查結果」「逾期狀況」欄才顯示對應篩選（工作月報模式） */
-function setupSmartFilters(){
- const fr=document.getElementById("filterResult");
- const fl=document.getElementById("filterLate");
- if(columns.includes("審查結果")){
-  fr.style.display="";
-  fr.innerHTML='<option value="">全部審查結果</option>';
-  [...new Set(allRows.map(x=>x["審查結果"]).filter(Boolean).sort())]
-  .forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;fr.appendChild(o);});
- } else fr.style.display="none";
- fl.style.display=columns.includes("逾期狀況")?"":"none";
-}
-
-/* 徽章：只套在特定欄位（內容一律 esc 跳脫） */
-function cellHtml(col,v){
- v=esc((v||"").trim());
- if(col==="審查結果"){
-  if(v.includes("同意")) return `<span class="badge b-ok">${v}</span>`;
-  if(v.includes("審退")) return `<span class="badge b-rej">${v}</span>`;
-  if(v.includes("審查中")) return `<span class="badge b-late">${v}</span>`;
-  return `<span class="badge b-none">${v||"—"}</span>`;
- }
- if(col==="提送次數"){
-  if(v && v!=="1") return `<span class="badge b-late">第${v}次</span>`;
-  return v?`第${v}次`:"";
- }
- if(col==="逾期狀況"){
-  if(v.startsWith("逾期")) return `<span class="badge b-late">${v}</span>`;
-  if(v==="無逾期") return `<span class="badge b-ok">${v}</span>`;
-  return `<span class="badge b-none">${v||"—"}</span>`;
- }
- if(col.includes("文號")) return `<span style="font-family:ui-monospace,monospace;font-size:12.5px">${v}</span>`;
- return v;
-}
-
-function render(rows){
- currentRows=rows;
- tbody.innerHTML="";
- if(!rows.length){tbody.innerHTML=`<tr><td colspan="${columns.length||1}">沒有資料</td></tr>`;count.textContent="";return;}
- rows.forEach((r,idx)=>{
-  const tr=document.createElement("tr");
-  tr.innerHTML=columns.map((c,i)=>{
-   const v=cellHtml(c,r[c]);
-   return i===1
-    ?`<td><a href="#" onclick="showDetail(${idx});return false;">${v||esc(r[c]||"")}</a></td>`
-    :`<td>${v}</td>`;
-  }).join("");
-  tbody.appendChild(tr);
- });
- count.textContent=`共 ${rows.length} / ${allRows.length} 筆`;
-}
-
-function showDetail(i){
- const r=currentRows[i]; if(!r) return;
- dname.textContent=r[columns[1]]||r[columns[0]]||"";
- detail.innerHTML=columns.map(k=>`<b>${esc(k)}</b>：${esc(r[k]||"—")}<br>`).join("");
- dlg.showModal();
-}
-
-function applyFilters(){
- const kw=keyword.value.trim().toLowerCase();
- const fr=document.getElementById("filterResult");
- const fl=document.getElementById("filterLate");
- const rows=allRows.filter(r=>{
-  if(fr.style.display!=="none" && fr.value && r["審查結果"]!==fr.value) return false;
-  if(fl.style.display!=="none" && fl.value){
-   const late=(r["逾期狀況"]||"").startsWith("逾期");
-   if(fl.value==="LATE" && !late) return false;
-   if(fl.value==="ONTIME" && (r["逾期狀況"]||"").trim()!=="無逾期") return false;
-  }
-  return !kw || (r._search||"").includes(kw);
- });
- render(rows);
-}
-
-/* --- AI 分析（BYOK）：金鑰只在記憶體，只直連官方 API --- */
-/* 快捷提問：把完整問句填進輸入框再送出，讓學員看見「好問題長什麼樣」 */
-const PRESETS={
- summary:"請用白話總結這批資料的重點：共幾期、涵蓋期間、提送狀況整體如何、有沒有需要注意的地方。",
- late:"請統計逾期情形：共逾期幾次、各逾期幾日、集中在哪些月份，並判斷逾期有沒有惡化或改善的趨勢。",
- reject:"請整理被審退的期別：哪幾期被審退、補送花了幾天、補送後的結果如何。",
- draft:"請把這批資料寫成一段約150字、可直接貼進公務報告的文字：語氣正式，包含涵蓋期間、提送準時情形、逾期與審退的統計。"
-};
-function quickAsk(k){
- document.getElementById("aiQ").value=PRESETS[k]||"";
- askAI();
-}
-
-async function askAI(){
- const key=document.getElementById("aiKey").value.trim();
- if(!key){alert("請先貼上你的 API Key（金鑰不會被儲存）");return;}
- if(!currentRows.length){alert("目前沒有資料可以分析，請先載入資料");return;}
- const provider=document.getElementById("aiProvider").value;
- const btn=document.getElementById("aiBtn");
- const out=document.getElementById("aiOut");
- // 只送「目前篩選出的資料」，最多 80 筆（最小揭露＋省 token）
- const rows=currentRows.slice(0,80);
- const tsv=[columns.join("\t")].concat(rows.map(r=>columns.map(c=>String(r[c]||"").replace(/\t/g," ")).join("\t"))).join("\n");
- const q=document.getElementById("aiQ").value.trim()
-   ||"請用白話總結這份資料的重點，並指出值得注意的模式（例如逾期、審退的情形）。";
- const prompt=`以下是一份資料表（TSV 格式，共 ${rows.length} 筆${currentRows.length>80?"，已截取前 80 筆":""}）：\n${tsv}\n\n問題：${q}\n請用繁體中文回答，精簡扼要。`;
- btn.disabled=true;out.style.display="block";out.textContent="AI 思考中…";
- try{
-  let text;
-  if(provider==="gemini"){
-   const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="+encodeURIComponent(key),{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
-   const d=await r.json();
-   if(d.error) throw new Error(d.error.message||"Gemini 回傳錯誤");
-   text=(d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("")||"（沒有回應內容）";
-  }else{
-   const r=await fetch("https://api.openai.com/v1/chat/completions",{
-    method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
-    body:JSON.stringify({model:"gpt-5.4-mini",messages:[{role:"user",content:prompt}]})});
-   const d=await r.json();
-   if(d.error) throw new Error(d.error.message||"OpenAI 回傳錯誤");
-   text=d.choices?.[0]?.message?.content||"（沒有回應內容）";
-  }
-  out.textContent=text;   // textContent＝AI 回覆也不當 HTML 執行，防注入
- }catch(e){
-  out.textContent="呼叫失敗："+e.message+"\n請確認：Key 是否正確、額度是否足夠、網路是否正常。";
- }
- btn.disabled=false;
-}
-
-function loadSheet(){
- if(!SHEET_ID){setup.style.display="block";statusEl.textContent="尚未設定";return;}
- setup.style.display="none";
- statusEl.textContent="讀取中...";
- // 注意：PapaParse 的 complete 第二參數是 file 物件（truthy），不可直接當 append 用
- Papa.parse(csvUrl(),{download:true,header:true,skipEmptyLines:true,
-  complete:res=>onParsed(res, document.getElementById("mergeChk").checked),
-  error:()=>{
-   statusEl.textContent="讀取失敗";
-   tbody.innerHTML=`<tr><td colspan="${columns.length||1}">讀不到資料：請確認 SHEET_ID 正確、且試算表已設「知道連結的任何人／檢視者」。</td></tr>`;
-  }});
-}
-
-keyword.oninput=applyFilters;
-filterResult.onchange=applyFilters;
-filterLate.onchange=applyFilters;
-
 route();
-loadSheet();
-setInterval(()=>{if(mode==="sheet"&&SHEET_ID)loadSheet();},60000);
 </script>
 </body>
 </html>
